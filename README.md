@@ -24,5 +24,6 @@ A maze generation and solution application.
 1. Initialize project structure with Spring Boot
 2. Configure TDD development workflow using MCP Version 10
 3. Set up README.md documentation
-4. Implement basic status controller
+4. Implement basic status controller with CORS support
+5. Survey AWS RDS PostgreSQL versions and add related configurations
 

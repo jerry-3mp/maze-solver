@@ -1,0 +1,11 @@
+services:
+  postgres-database:
+    image: postgres:15.10
+    container_name: maze-solver-postgres
+    ports:
+      - "5431:5432"
+    environment:
+      - POSTGRES_USER=maze_solver_user
+      - POSTGRES_PASSWORD=maze_solver_user_password
+      - POSTGRES_DB=maze_solver
+    restart: unless-stopped
