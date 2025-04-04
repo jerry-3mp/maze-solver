@@ -13,11 +13,16 @@ A maze generation and solution application.
 
 ## Project Knowledge
 
-*This section will be populated as the project develops*
+### API Endpoints
+
+- `GET /api/status`: Returns a simple text message confirming the server is running
+
+*More endpoints will be added as the project develops*
 
 ## Development Steps
 
 1. Initialize project structure with Spring Boot
 2. Configure TDD development workflow using MCP Version 10
 3. Set up README.md documentation
+4. Implement basic status controller
 
