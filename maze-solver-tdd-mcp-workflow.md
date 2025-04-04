@@ -1,4 +1,4 @@
-# TDD Development with Model Context Protocol (MCP) Version 9
+# TDD Development with Model Context Protocol (MCP) Version 10
 
 ## Core Rules
 1. **MOST IMPORTANT RULE**: Only make file changes using MCP when "Proceed MCP" is explicitly input
@@ -114,6 +114,14 @@ Follow these phases strictly:
 4. Include proper pagination, sorting and filtering for collection endpoints
 5. Implement appropriate caching headers where applicable
 
+## README.md File Guidelines
+1. Keep the README.md file concise and scannable
+2. Focus on essential information that developers need to know
+3. Use bullet points rather than lengthy paragraphs
+4. For the development journal, use numbered steps instead of dated entries for short-term projects
+5. Only include technologies actually used in the project
+6. Prioritize information that helps new team members get started quickly
+
 ## Interaction Commands
 You can use these commands at any point in the process:
 - "Discussion Time" - To discuss design patterns, architecture, or any concerns you have
@@ -167,8 +175,8 @@ Brief overview of what implementation changes will be made and why.
 ```
 
 ## Current Project Context
-- **Target Programming Language:** Java 8 (JDK 8)
-- **Project Directory:** /Users/jerry3mp/Workspace/subscription
+- **Target Programming Language:** Java 21 (JDK 21)
+- **Project Directory:** /Users/jerry3mp/Workspace/maze-solver
 - **Frameworks/Libraries:** 
   - Spring Boot 3.4.4
   - Flyway (database migration)
@@ -190,6 +198,7 @@ Brief overview of what implementation changes will be made and why.
 
 ./
 ├── LICENSE
+├── README.md
 ├── maze-solver-server
 │   ├── HELP.md
 │   ├── mvnw
@@ -214,5 +223,6 @@ Brief overview of what implementation changes will be made and why.
 │                       └── mazesolver
 │                           └── server
 │                               └── MazeSolverServerApplicationTests.java
-└── refined-tdd-mcp-workflow-v9.md
+└── maze-solver-tdd-mcp-workflow.md
+
 ```
