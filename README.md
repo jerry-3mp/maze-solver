@@ -26,4 +26,8 @@ A maze generation and solution application.
 3. Set up README.md documentation
 4. Implement basic status controller with CORS support
 5. Survey AWS RDS PostgreSQL versions and add related configurations
-
+6. Configure Spring Boot for AWS Lambda deployment
+   - https://www.youtube.com/watch?v=HQQD4dndDpE
+   - https://github.com/aws/serverless-java-container/wiki/Quick-start---Spring-Boot3
+7. Set up AWS RDS database and Lambda connectivity
+8. Implement secure credential management with GitHub Secrets
