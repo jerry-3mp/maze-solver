@@ -199,30 +199,47 @@ Brief overview of what implementation changes will be made and why.
 ./
 ├── LICENSE
 ├── README.md
+├── docker-compose.pg.volume.yml
+├── docker-compose.yml
 ├── maze-solver-server
 │   ├── HELP.md
+│   ├── events
+│   │   └── event.json
 │   ├── mvnw
 │   ├── mvnw.cmd
 │   ├── pom.xml
-│   └── src
-│       ├── main
-│       │   ├── java
-│       │   │   └── io
-│       │   │       └── jistud
-│       │   │           └── mazesolver
-│       │   │               └── server
-│       │   │                   └── MazeSolverServerApplication.java
-│       │   └── resources
-│       │       ├── application.properties
-│       │       ├── static
-│       │       └── templates
-│       └── test
-│           └── java
-│               └── io
-│                   └── jistud
-│                       └── mazesolver
-│                           └── server
-│                               └── MazeSolverServerApplicationTests.java
+│   ├── sam.md
+│   ├── samconfig.toml
+│   ├── src
+│   │   ├── main
+│   │   │   ├── java
+│   │   │   │   └── io
+│   │   │   │       └── jistud
+│   │   │   │           └── mazesolver
+│   │   │   │               └── server
+│   │   │   │                   ├── MazeSolverServerApplication.java
+│   │   │   │                   ├── StreamLambdaHandler.java
+│   │   │   │                   ├── config
+│   │   │   │                   │   └── SwaggerConfig.java
+│   │   │   │                   └── controller
+│   │   │   │                       └── StatusController.java
+│   │   │   └── resources
+│   │   │       ├── application-lambda.properties
+│   │   │       ├── application-local.properties
+│   │   │       ├── application-test.properties
+│   │   │       ├── application.properties
+│   │   │       ├── db
+│   │   │       │   └── migration
+│   │   │       │       └── common
+│   │   │       ├── static
+│   │   │       └── templates
+│   │   └── test
+│   │       └── java
+│   │           └── io
+│   │               └── jistud
+│   │                   └── mazesolver
+│   │                       └── server
+│   │                           └── MazeSolverServerApplicationTests.java
+│   └── template.yaml
 └── maze-solver-tdd-mcp-workflow.md
-
 ```
