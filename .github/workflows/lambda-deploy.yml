@@ -44,6 +44,7 @@ jobs:
           # Skip tests during SAM build using MAVEN_OPTS
           MAVEN_OPTS="-DskipTests=true" sam build --skip-pull-image \
             --parameter-overrides \
+            DbUrl=${{ secrets.DB_URL }} \
             DbUsername=${{ secrets.DB_USERNAME }} \
             DbPassword=${{ secrets.DB_PASSWORD }}
 
@@ -56,5 +57,6 @@ jobs:
             --stack-name maze-solver-server \
             --capabilities CAPABILITY_IAM \
             --parameter-overrides \
+            DbUrl=${{ secrets.DB_URL }} \
             DbUsername=${{ secrets.DB_USERNAME }} \
             DbPassword=${{ secrets.DB_PASSWORD }}

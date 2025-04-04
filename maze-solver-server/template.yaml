@@ -5,6 +5,24 @@ Description: >
 
   Sample SAM Template for maze-solver-server
 
+Parameters:
+  # Database configuration
+  DbUrl:
+    Type: String
+    Default: 'jdbc:postgresql://localhost:5432/maze-solver'
+    Description: Database connection URL
+    NoEcho: true
+  DbUsername:
+    Type: String
+    Default: 'postgres'
+    Description: Database username for the application
+    NoEcho: true
+  DbPassword:
+    Type: String
+    Default: 'postgres'
+    Description: Database password for the application
+    NoEcho: true
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -27,6 +45,30 @@ Resources:
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           SPRING_PROFILES_ACTIVE: lambda
+          SPRING_DATASOURCE_URL: !Ref DbUrl
+          SPRING_DATASOURCE_USERNAME: !Ref DbUsername
+          SPRING_DATASOURCE_PASSWORD: !Ref DbPassword
+      # VPC Configuration for accessing RDS
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-071150ecf471c8556
+        SubnetIds:
+          - subnet-07c06215afbdb1972
+          - subnet-07bfd74e65da2a9cc
+          - subnet-07107f000166b107e
+      # Required IAM permissions for Lambda in VPC
+      Policies:
+        - AWSLambdaVPCAccessExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 'ec2:CreateNetworkInterface'
+                - 'ec2:DescribeNetworkInterfaces'
+                - 'ec2:DeleteNetworkInterface'
+                - 'ec2:DescribeSubnets'
+                - 'ec2:DescribeSecurityGroups'
+              Resource: '*'
       Events:
         MazeSolver:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
