@@ -384,12 +384,88 @@ public class MazeBuilder {
 
         @Override
         public WallStage withRandomWalls(double density) {
-            throw new UnsupportedOperationException("Method not implemented yet");
+            if (density < 0.0 || density > 1.0) {
+                throw new IllegalArgumentException("Wall density must be between 0.0 and 1.0, but was " + density);
+            }
+
+            // Initialize grid if not already initialized
+            if (grid == null) {
+                initializeGrid();
+            }
+
+            // Create a copy of the grid to work with
+            char[][] tempGrid = new char[height][width];
+            for (int i = 0; i < height; i++) {
+                System.arraycopy(grid[i], 0, tempGrid[i], 0, width);
+            }
+
+            // Collect all positions that are empty and not part of the path
+            java.util.List<Position> emptyPositions = new java.util.ArrayList<>();
+            for (int row = 0; row < height; row++) {
+                for (int col = 0; col < width; col++) {
+                    if (tempGrid[row][col] == ' ') {
+                        emptyPositions.add(new Position(row, col));
+                    }
+                }
+            }
+
+            // Shuffle the empty positions
+            java.util.Collections.shuffle(emptyPositions);
+
+            // Calculate number of walls to add based on density
+            int totalEmptyCells = emptyPositions.size();
+            int wallsToAdd = (int) Math.round(totalEmptyCells * density);
+
+            // Add walls at random positions
+            int wallsAdded = 0;
+
+            for (Position pos : emptyPositions) {
+                if (wallsAdded >= wallsToAdd) {
+                    break;
+                }
+
+                // Add a wall at this position
+                grid[pos.row()][pos.col()] = 'w';
+                wallsAdded++;
+            }
+
+            return this;
         }
 
         @Override
         public FinalStage withPerimeterWalls() {
-            throw new UnsupportedOperationException("Method not implemented yet");
+            // Initialize grid if not already initialized
+            if (grid == null) {
+                initializeGrid();
+            }
+
+            // Add walls to the top and bottom rows, preserving special cells
+            for (int col = 0; col < width; col++) {
+                // Top row - add wall only if not a special cell
+                if (grid[0][col] == ' ') {
+                    grid[0][col] = 'w';
+                }
+
+                // Bottom row - add wall only if not a special cell
+                if (grid[height - 1][col] == ' ') {
+                    grid[height - 1][col] = 'w';
+                }
+            }
+
+            // Add walls to the left and right columns, preserving special cells
+            for (int row = 0; row < height; row++) {
+                // Left column - add wall only if not a special cell
+                if (grid[row][0] == ' ') {
+                    grid[row][0] = 'w';
+                }
+
+                // Right column - add wall only if not a special cell
+                if (grid[row][width - 1] == ' ') {
+                    grid[row][width - 1] = 'w';
+                }
+            }
+
+            return this;
         }
 
         @Override
@@ -399,7 +475,21 @@ public class MazeBuilder {
 
         @Override
         public Maze build() {
-            throw new UnsupportedOperationException("Method not implemented yet");
+            // Initialize grid if not already initialized
+            if (grid == null) {
+                initializeGrid();
+            }
+
+            // Validate that we have start and end positions
+            if (startPosition == null) {
+                throw new IllegalStateException("Start position must be set before building the maze");
+            }
+            if (endPosition == null) {
+                throw new IllegalStateException("End position must be set before building the maze");
+            }
+
+            // Create a new maze with the specified dimensions with given grid
+            return new Maze(height, width, grid);
         }
 
         /**
