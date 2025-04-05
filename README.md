@@ -31,3 +31,4 @@ A maze generation and solution application.
    - https://github.com/aws/serverless-java-container/wiki/Quick-start---Spring-Boot3
 7. Set up AWS RDS database and Lambda connectivity
 8. Implement secure credential management with GitHub Secrets
+9. Add rule against discussing maze-solving algorithms before develop maze-related feature

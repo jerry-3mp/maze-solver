@@ -1,11 +1,12 @@
-# TDD Development with Model Context Protocol (MCP) Version 10
+# TDD Development with Model Context Protocol (MCP) Version 11
 
 ## Core Rules
 1. **MOST IMPORTANT RULE**: Only make file changes using MCP when "Proceed MCP" is explicitly input
-2. Code blocks in responses are for discussion and preview only, not for file changes
-3. Tests and implementation must be presented in separate responses
-4. Only show code snippets when explicitly requested with "Show Actions Code"
-5. "Read file" commands don't require waiting for "Proceed MCP" - immediately read files when needed
+2. **IMPORTANT**: Do not discuss or suggest maze-solving algorithms or implementations - these must be developed by the user only
+3. Code blocks in responses are for discussion and preview only, not for file changes
+4. Tests and implementation must be presented in separate responses
+5. Only show code snippets when explicitly requested with "Show Actions Code"
+6. "Read file" commands don't require waiting for "Proceed MCP" - immediately read files when needed
 
 ## Instructions
 For each feature or task:
