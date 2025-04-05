@@ -16,6 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.jistud.mazesolver.server.controller.dto.MazeGenerationRequestDTO;
 import io.jistud.mazesolver.server.entity.MazeEntity;
 import io.jistud.mazesolver.server.model.Maze;
 import io.jistud.mazesolver.server.model.Position;
@@ -24,6 +27,7 @@ import io.jistud.mazesolver.server.service.MazeService;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +40,9 @@ class MazeControllerTest {
 
     @MockBean
     private MazeService mazeService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private MazeEntity testMazeEntity;
     private Maze testMaze;
@@ -152,6 +159,42 @@ class MazeControllerTest {
         // When/Then
         mockMvc.perform(put("/api/v1/mazes/999/solve").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void generateRandomMaze_ShouldReturnNewMaze() throws Exception {
+        // Given
+        MazeGenerationRequestDTO requestDTO = new MazeGenerationRequestDTO(10, 10);
+
+        // Create a sample maze for the service to return
+        Maze generatedMaze = new Maze(10, 10);
+        char[][] grid = generatedMaze.getGrid();
+        grid[0][0] = Maze.START;
+        grid[9][9] = Maze.END;
+        // Set some walls to make it a proper maze
+        grid[1][1] = Maze.WALL;
+        grid[2][2] = Maze.WALL;
+
+        // Set up test entity that would be created by service
+        MazeEntity createdEntity = new MazeEntity();
+        createdEntity.setId(42);
+        createdEntity.setMazeData("Sample maze data");
+        createdEntity.setCreatedAt(Instant.now());
+        createdEntity.setUpdatedAt(Instant.now());
+        createdEntity.setSolved(false);
+
+        when(mazeService.generateRandomMaze(eq(10), eq(10))).thenReturn(generatedMaze);
+        when(mazeService.convertToModel(any(MazeEntity.class))).thenReturn(generatedMaze);
+        when(mazeService.saveEntityFromMaze(any(Maze.class))).thenReturn(createdEntity);
+
+        // When/Then
+        mockMvc.perform(post("/api/v1/mazes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.grid").isArray())
+                .andExpect(jsonPath("$.grid.length()").value(10))
+                .andExpect(jsonPath("$.solved").value(false));
     }
 
     private static <T> T any(Class<T> type) {

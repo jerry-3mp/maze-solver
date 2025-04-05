@@ -37,11 +37,14 @@ public class MazeServiceImpl implements MazeService {
                 .withEmptyPath()
                 .build();
 
-        // Save the maze to the database
-        MazeEntity entity = convertToEntity(maze);
-        mazeRepository.save(entity);
-
         return maze;
+    }
+
+    @Override
+    public MazeEntity saveEntityFromMaze(Maze maze) {
+        // Convert the maze to entity and save it to the database
+        MazeEntity entity = convertToEntity(maze);
+        return mazeRepository.save(entity);
     }
 
     @Override

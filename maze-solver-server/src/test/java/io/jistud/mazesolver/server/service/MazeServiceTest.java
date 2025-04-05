@@ -29,9 +29,13 @@ class MazeServiceTest {
 
     private MazeService mazeService;
 
+    @Mock
+    private ArgumentCaptor<MazeEntity> entityCaptor;
+
     @BeforeEach
     void setUp() {
         mazeService = new MazeServiceImpl(mazeRepository);
+        entityCaptor = ArgumentCaptor.forClass(MazeEntity.class);
     }
 
     @Test
@@ -39,7 +43,6 @@ class MazeServiceTest {
         // Given
         int width = 10;
         int height = 10;
-        when(mazeRepository.save(any(MazeEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // When
         Maze maze = mazeService.generateRandomMaze(width, height);
@@ -59,8 +62,33 @@ class MazeServiceTest {
         // Verify the maze path cells has been removed
         List<Position> pathPositions = maze.findCellsWithValue(Maze.PATH);
         assertEquals(0, pathPositions.size(), "Maze should not have path cells");
+    }
 
-        // Verify the maze was saved to the repository
+    @Test
+    void testSaveEntityFromMaze() {
+        // Given
+        Maze maze = new Maze(5, 5);
+        maze.setCell(0, 2, Maze.START);
+        maze.setCell(4, 2, Maze.END);
+        maze.setCell(1, 1, Maze.WALL);
+        maze.setCell(2, 2, Maze.WALL);
+
+        MazeEntity savedEntity = new MazeEntity();
+        savedEntity.setId(123);
+        savedEntity.setMazeData("Sample maze data");
+        savedEntity.setCreatedAt(Instant.now());
+        savedEntity.setUpdatedAt(Instant.now());
+
+        when(mazeRepository.save(any(MazeEntity.class))).thenReturn(savedEntity);
+
+        // When
+        MazeEntity result = mazeService.saveEntityFromMaze(maze);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(123, result.getId().intValue());
+
+        // Verify the correct data was saved
         verify(mazeRepository).save(any(MazeEntity.class));
     }
 

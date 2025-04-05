@@ -23,6 +23,14 @@ public interface MazeService {
     Maze generateRandomMaze(int width, int height);
 
     /**
+     * Converts a maze model to a maze entity and saves it to the database
+     *
+     * @param maze the maze model to save
+     * @return the saved maze entity
+     */
+    MazeEntity saveEntityFromMaze(Maze maze);
+
+    /**
      * Find a maze entity by its ID
      *
      * @param id the ID of the maze

@@ -8,11 +8,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.jistud.mazesolver.server.controller.dto.MazeGenerationRequestDTO;
 import io.jistud.mazesolver.server.controller.dto.MazeResponseDTO;
 import io.jistud.mazesolver.server.controller.dto.MazeSummaryListResponse;
 import io.jistud.mazesolver.server.entity.MazeEntity;
@@ -35,6 +38,41 @@ public class MazeController {
 
     public MazeController(MazeService mazeService) {
         this.mazeService = mazeService;
+    }
+
+    @PostMapping
+    @Operation(
+            summary = "Generate a random maze",
+            description = "Creates a new random maze with the specified dimensions")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successfully generated maze",
+                        content = @Content(schema = @Schema(implementation = MazeResponseDTO.class))),
+                @ApiResponse(responseCode = "400", description = "Invalid dimensions provided")
+            })
+    public ResponseEntity<MazeResponseDTO> generateRandomMaze(
+            @Parameter(description = "Maze generation parameters") @RequestBody MazeGenerationRequestDTO request) {
+
+        // Validate dimensions
+        if (request.getWidth() < 5 || request.getHeight() < 5) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // Generate the maze
+        Maze generatedMaze = mazeService.generateRandomMaze(request.getWidth(), request.getHeight());
+
+        // Save the maze to database and get entity with ID
+        MazeEntity savedEntity = mazeService.saveEntityFromMaze(generatedMaze);
+
+        // Get the ID of the saved maze
+        Integer mazeId = savedEntity.getId();
+
+        // Create the response DTO
+        MazeResponseDTO response = MazeResponseDTO.fromMaze(mazeId, generatedMaze);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
