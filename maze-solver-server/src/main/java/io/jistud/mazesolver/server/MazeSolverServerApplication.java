@@ -9,5 +9,4 @@ public class MazeSolverServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(MazeSolverServerApplication.class, args);
     }
-
 }
