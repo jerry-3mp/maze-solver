@@ -209,6 +209,7 @@ Brief overview of what implementation changes will be made and why.
 │   │   └── maze-builder-state-diagram.puml
 │   ├── events
 │   │   └── event.json
+│   ├── maze.txt
 │   ├── mvnw
 │   ├── mvnw.cmd
 │   ├── pom.xml
