@@ -1,6 +1,7 @@
 package io.jistud.mazesolver.server.model;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a maze with a 2D grid of characters.
@@ -178,6 +179,61 @@ public class Maze {
         }
 
         return positions;
+    }
+
+    public void solve() {
+        Position startPosition = null;
+        Position endPosition = null;
+
+        List<Position> startPositions = findCellsWithValue(START);
+        List<Position> endPositions = findCellsWithValue(END);
+
+        if (startPositions.size() != 1 || endPositions.size() != 1) {
+            throw new IllegalStateException("Maze must have exactly one start position and one end position");
+        }
+
+        startPosition = startPositions.getFirst();
+        endPosition = endPositions.getFirst();
+        java.util.List<Position> pathSteps = new java.util.ArrayList<>();
+        java.util.Set<Position> visited = new java.util.HashSet<>();
+        java.util.List<Position> ans = dfsTraverse(startPosition, endPosition, visited, pathSteps);
+    }
+
+    private List<Position> dfsTraverse(Position currentPosition, Position endPosition, Set<Position> visited, List<Position> pathSteps) {
+        pathSteps.add(currentPosition);
+        visited.add(currentPosition);
+        System.out.printf("%d %d\n", currentPosition.row(), currentPosition.col());
+        System.out.println(visited);
+        System.out.println(pathSteps);
+        if (currentPosition.equals(endPosition)) return pathSteps;
+        int rowIndex = currentPosition.row();
+        int colIndex = currentPosition.col();
+        Position upPosition = null;
+        if (isValidPosition(rowIndex - 1, colIndex) && grid[rowIndex - 1][colIndex] != Maze.WALL) {
+            upPosition = new Position(rowIndex - 1, colIndex);
+        }
+        Position downPosition = null;
+        if (isValidPosition(rowIndex + 1, colIndex) && grid[rowIndex + 1][colIndex] != Maze.WALL) {
+            downPosition = new Position(rowIndex + 1, colIndex);
+        }
+        Position leftPosition = null;
+        if (isValidPosition(rowIndex, colIndex - 1) && grid[rowIndex][colIndex - 1] != Maze.WALL) {
+            leftPosition = new Position(rowIndex, colIndex - 1);
+        }
+        Position rightPosition = null;
+        if (isValidPosition(rowIndex, colIndex + 1) && grid[rowIndex][colIndex + 1] != Maze.WALL) {
+            rightPosition = new Position(rowIndex, colIndex + 1);
+        }
+        if (upPosition != null && !visited.contains(upPosition)) {
+            return dfsTraverse(upPosition, endPosition, visited, pathSteps);
+        } else if (downPosition != null && !visited.contains(downPosition)) {
+            return dfsTraverse(downPosition, endPosition, visited, pathSteps);
+        } else if (leftPosition != null && !visited.contains(leftPosition)) {
+            return dfsTraverse(leftPosition, endPosition, visited, pathSteps);
+        } else if (rightPosition != null && !visited.contains(rightPosition)) {
+            return dfsTraverse(rightPosition, endPosition, visited, pathSteps);
+        }
+        return null;
     }
 
     /**
