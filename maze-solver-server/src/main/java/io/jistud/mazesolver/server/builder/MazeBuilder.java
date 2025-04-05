@@ -232,7 +232,154 @@ public class MazeBuilder {
 
         @Override
         public WallStage withRandomPath() {
-            throw new UnsupportedOperationException("Method not implemented yet");
+            // Initialize grid if not already initialized
+            if (grid == null) {
+                initializeGrid();
+            }
+
+            // Mark start and end positions
+            grid[startPosition.row()][startPosition.col()] = 's';
+            grid[endPosition.row()][endPosition.col()] = 'e';
+
+            // Generate random path from start to end
+            generateRandomPath();
+
+            return this;
+        }
+
+        /**
+         * Initializes the grid with empty cells.
+         */
+        private void initializeGrid() {
+            grid = new char[height][width];
+
+            // Fill grid with empty cells
+            for (int row = 0; row < height; row++) {
+                for (int col = 0; col < width; col++) {
+                    grid[row][col] = ' ';
+                }
+            }
+        }
+
+        /**
+         * Generates a random path from start to end position using a random walk with backtracking.
+         */
+        private void generateRandomPath() {
+            // Create a copy of the grid for path finding
+            char[][] tempGrid = new char[height][width];
+            for (int i = 0; i < height; i++) {
+                System.arraycopy(grid[i], 0, tempGrid[i], 0, width);
+            }
+
+            // Keep track of the path
+            java.util.List<Position> pathSteps = new java.util.ArrayList<>();
+            java.util.Set<Position> visited = new java.util.HashSet<>();
+
+            // Start from the start position
+            Position current = startPosition;
+            pathSteps.add(current);
+            visited.add(current);
+
+            // Random generator
+            java.util.Random random = new java.util.Random();
+
+            // Continue until we reach the end
+            while (!current.equals(endPosition)) {
+                // Get valid neighbors (up, down, left, right)
+                java.util.List<Position> neighbors = getUnvisitedNeighbors(current, visited);
+
+                if (neighbors.isEmpty()) {
+                    // Dead end - remove current step and backtrack
+                    if (pathSteps.size() > 1) { // Ensure we don't remove the start
+                        pathSteps.removeLast();
+                        current = pathSteps.getLast();
+
+                        // Backtrack to a random previous position
+                        int backtrackIndex = random.nextInt(pathSteps.size());
+
+                        // Optionally prune the path after the backtrack point for more randomness
+                        if (backtrackIndex < pathSteps.size() - 1) {
+                            // Remove corresponding positions from the visited set using forEach
+                            pathSteps
+                                    .subList(backtrackIndex + 1, pathSteps.size())
+                                    .forEach(posToRemove -> {
+                                        // Don't unvisit the start or end position
+                                        if (!posToRemove.equals(startPosition) && !posToRemove.equals(endPosition)) {
+                                            visited.remove(posToRemove);
+                                        }
+                                    });
+
+                            // Then clear the path steps
+                            pathSteps
+                                    .subList(backtrackIndex + 1, pathSteps.size())
+                                    .clear();
+                            current = pathSteps.get(backtrackIndex);
+                        }
+                    }
+                } else {
+                    // Move to a random unvisited neighbor
+                    current = neighbors.get(random.nextInt(neighbors.size()));
+                    pathSteps.add(current);
+                    visited.add(current);
+
+                    // If we've reached the end, break
+                    if (current.equals(endPosition)) {
+                        break;
+                    }
+                }
+            }
+
+            // Mark the path in the actual grid
+            for (Position pos : pathSteps) {
+                // Don't overwrite start and end markers
+                if (!pos.equals(startPosition) && !pos.equals(endPosition)) {
+                    grid[pos.row()][pos.col()] = 'p';
+                }
+            }
+        }
+
+        /**
+         * Gets unvisited neighboring positions (up, down, left, right).
+         *
+         * @param pos the current position
+         * @param visited set of already visited positions
+         * @return list of valid unvisited neighbors
+         */
+        private java.util.List<Position> getUnvisitedNeighbors(Position pos, java.util.Set<Position> visited) {
+            int row = pos.row();
+            int col = pos.col();
+            java.util.List<Position> neighbors = new java.util.ArrayList<>();
+
+            // Check all four directions
+            Position[] possibleNeighbors = {
+                new Position(row - 1, col), // Up
+                new Position(row + 1, col), // Down
+                new Position(row, col - 1), // Left
+                new Position(row, col + 1) // Right
+            };
+
+            for (Position neighbor : possibleNeighbors) {
+                // Check if position is valid and not visited
+                if (isValidPosition(neighbor) && !visited.contains(neighbor)) {
+                    // Special case: allow destination even if visited
+                    if (neighbor.equals(endPosition)) {
+                        return java.util.List.of(endPosition); // Prioritize reaching the end
+                    }
+                    neighbors.add(neighbor);
+                }
+            }
+
+            return neighbors;
+        }
+
+        /**
+         * Checks if a position is valid within the maze.
+         *
+         * @param pos the position to check
+         * @return true if position is valid, false otherwise
+         */
+        private boolean isValidPosition(Position pos) {
+            return pos.row() >= 0 && pos.row() < height && pos.col() >= 0 && pos.col() < width;
         }
 
         @Override
