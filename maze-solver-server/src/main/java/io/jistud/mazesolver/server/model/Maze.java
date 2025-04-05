@@ -17,6 +17,8 @@ public class Maze {
     private final int height;
     private final int width;
     private final char[][] grid;
+    private boolean isSolved = false;
+    private List<Position> solvedPath = null;
 
     // Valid cell values
     public static final char START = 's';
@@ -181,6 +183,42 @@ public class Maze {
         return positions;
     }
 
+    /**
+     * Returns whether the maze has been solved.
+     *
+     * @return true if the maze has been solved, false otherwise
+     */
+    public boolean isSolved() {
+        return isSolved;
+    }
+
+    /**
+     * Gets the current solved path of the maze.
+     *
+     * @return the list of positions representing the solution path, or null if not solved
+     */
+    public List<Position> getSolvedPath() {
+        return solvedPath;
+    }
+
+    /**
+     * Sets the solved path for the maze.
+     * Also updates the isSolved flag based on whether the path is valid (not null and not empty).
+     *
+     * @param solvedPath the list of positions representing the solution path
+     */
+    public void setSolvedPath(List<Position> solvedPath) {
+        this.solvedPath = solvedPath;
+        this.isSolved = (solvedPath != null && !solvedPath.isEmpty());
+    }
+
+    /**
+     * Attempts to solve the maze using a depth-first search algorithm.
+     * Updates the grid with the solution path if successful.
+     *
+     * @return true if the maze is solvable, false otherwise
+     * @throws IllegalStateException if the maze does not have exactly one start and one end position
+     */
     public boolean solve() {
         Position startPosition = null;
         Position endPosition = null;
@@ -195,14 +233,20 @@ public class Maze {
         startPosition = startPositions.getFirst();
         endPosition = endPositions.getFirst();
         java.util.Set<Position> visited = new java.util.HashSet<>();
-        List<Position> ans = dfsTraverse(startPosition, endPosition, visited, new java.util.ArrayList<>());
-        if (ans == null || ans.isEmpty()) {
+        List<Position> answerPath = dfsTraverse(startPosition, endPosition, visited, new java.util.ArrayList<>());
+        if (answerPath == null || answerPath.isEmpty()) {
+            setSolvedPath(null);
             return false;
         } else {
-            for (Position position : ans) {
+            // Update the grid with the solution answerPath
+            // TODO("Consider to update grid in setSolvedPath Method")
+            for (Position position : answerPath) {
                 char cell = grid[position.row()][position.col()];
                 if (cell == EMPTY) grid[position.row()][position.col()] = PATH;
             }
+
+            // Store the solution answerPath
+            setSolvedPath(answerPath);
             return true;
         }
     }

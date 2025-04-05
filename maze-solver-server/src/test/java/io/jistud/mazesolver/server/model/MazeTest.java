@@ -1,5 +1,8 @@
 package io.jistud.mazesolver.server.model;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -145,5 +148,58 @@ class MazeTest {
                 .build();
         Boolean isSolvalbe = maze.solve();
         assertEquals(true, isSolvalbe);
+    }
+
+    @Test
+    @DisplayName("New maze should have solvedPath initialized to null and isSolved to false")
+    void newMazeShouldHaveDefaultSolvedStateValues() {
+        Maze maze = new Maze(5, 5);
+
+        assertNull(maze.getSolvedPath());
+        assertFalse(maze.isSolved());
+    }
+
+    @Test
+    @DisplayName("Setting solved path should update the isSolved flag")
+    void settingSolvedPathShouldUpdateIsSolvedFlag() {
+        Maze maze = new Maze(5, 5);
+        List<Position> path = Arrays.asList(new Position(0, 0), new Position(0, 1), new Position(1, 1));
+
+        maze.setSolvedPath(path);
+
+        assertEquals(path, maze.getSolvedPath());
+        assertTrue(maze.isSolved());
+    }
+
+    @Test
+    @DisplayName("Setting null solved path should set isSolved to false")
+    void settingNullSolvedPathShouldSetIsSolvedToFalse() {
+        Maze maze = new Maze(5, 5);
+        List<Position> path = Arrays.asList(new Position(0, 0), new Position(0, 1), new Position(1, 1));
+
+        // First set a valid path
+        maze.setSolvedPath(path);
+        assertTrue(maze.isSolved());
+
+        // Then set null path
+        maze.setSolvedPath(null);
+        assertNull(maze.getSolvedPath());
+        assertFalse(maze.isSolved());
+    }
+
+    @Test
+    @DisplayName("Setting empty solved path should set isSolved to false")
+    void settingEmptySolvedPathShouldSetIsSolvedToFalse() {
+        Maze maze = new Maze(5, 5);
+        List<Position> path = Arrays.asList(new Position(0, 0), new Position(0, 1), new Position(1, 1));
+
+        // First set a valid path
+        maze.setSolvedPath(path);
+        assertTrue(maze.isSolved());
+
+        // Then set empty path
+        maze.setSolvedPath(List.of());
+        assertEquals(0, maze.getSolvedPath().size());
+        assertFalse(maze.isSolved());
     }
 }
