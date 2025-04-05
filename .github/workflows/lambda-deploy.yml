@@ -4,6 +4,18 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '**/*.java'
+      - '**/pom.xml'
+      - '**/application*.properties'
+      - '**/db/migration/**'
+      - 'maze-solver-server/template.yaml'
+      - '.github/workflows/lambda-deploy.yml'
+      # Explicitly exclude documentation changes
+      - '!**/*.md'
+      - '!**/*.txt'
+      - '!**/*.puml'
+      - '!**/LICENSE'
   workflow_dispatch:
 
 jobs:
