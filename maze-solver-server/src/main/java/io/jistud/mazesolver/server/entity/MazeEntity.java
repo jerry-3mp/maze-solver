@@ -7,6 +7,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import io.jistud.mazesolver.server.model.Maze;
 import io.jistud.mazesolver.server.model.Position;
@@ -15,6 +18,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "mazes", schema = "maze_solver")
+@EntityListeners(AuditingEntityListener.class)
 public class MazeEntity {
 
     @Id
@@ -50,9 +54,11 @@ public class MazeEntity {
     @Column(name = "solution_path", columnDefinition = "TEXT")
     private String solutionPath;
 
-    @Column(name = "created_at", nullable = false)
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
 
@@ -122,6 +128,7 @@ public class MazeEntity {
         // Serialize maze data
         entity.setMazeData(maze.toString());
 
+        // Note: createdAt and updatedAt are now managed by JPA auditing
         return entity;
     }
 
