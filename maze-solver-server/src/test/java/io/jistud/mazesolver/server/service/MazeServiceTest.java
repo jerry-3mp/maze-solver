@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,7 +67,7 @@ class MazeServiceTest {
     @Test
     void testGetMazeById() {
         // Given
-        UUID id = UUID.randomUUID();
+        Integer id = new java.util.Random().nextInt();
         MazeEntity mazeEntity = new MazeEntity();
         mazeEntity.setId(id);
         mazeEntity.setMazeData("www\nsew\nwww");
@@ -103,7 +102,7 @@ class MazeServiceTest {
     @Test
     void testGetMazeById_NotFound() {
         // Given
-        UUID id = UUID.randomUUID();
+        Integer id = new java.util.Random().nextInt();
         when(mazeRepository.findById(id)).thenReturn(Optional.empty());
 
         // When
@@ -117,7 +116,7 @@ class MazeServiceTest {
     void testGetAllMazes() {
         // Given
         MazeEntity maze1 = new MazeEntity();
-        maze1.setId(UUID.randomUUID());
+        maze1.setId(new java.util.Random().nextInt());
         maze1.setMazeData("www\nsew\nwww");
         maze1.setWidth(3);
         maze1.setHeight(3);
@@ -129,7 +128,7 @@ class MazeServiceTest {
         maze1.setCreatedAt(Instant.now());
 
         MazeEntity maze2 = new MazeEntity();
-        maze2.setId(UUID.randomUUID());
+        maze2.setId(new java.util.Random().nextInt());
         maze2.setMazeData("wwww\ns  e\nwwww");
         maze2.setWidth(4);
         maze2.setHeight(3);
@@ -156,7 +155,7 @@ class MazeServiceTest {
     @Test
     void testDeleteMaze() {
         // Given
-        UUID id = UUID.randomUUID();
+        Integer id = new java.util.Random().nextInt();
 
         // When
         mazeService.deleteMaze(id);
@@ -168,7 +167,7 @@ class MazeServiceTest {
     @Test
     void testSolveMaze_AlreadySolved() {
         // Given
-        UUID id = UUID.randomUUID();
+        Integer id = new java.util.Random().nextInt();
         MazeEntity entity = new MazeEntity();
         entity.setId(id);
         entity.setMazeData("www\nsew\nwww");
@@ -204,7 +203,7 @@ class MazeServiceTest {
     @Test
     void testSolveMaze_NotYetSolved() {
         // Given
-        UUID id = UUID.randomUUID();
+        Integer id = new java.util.Random().nextInt();
 
         // Create a maze that can be solved
         char[][] grid = new char[5][5];

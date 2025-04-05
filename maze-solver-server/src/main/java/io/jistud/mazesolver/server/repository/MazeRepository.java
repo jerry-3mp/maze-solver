@@ -2,7 +2,6 @@ package io.jistud.mazesolver.server.repository;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import io.jistud.mazesolver.server.entity.MazeEntity;
 
 @Repository
-public interface MazeRepository extends JpaRepository<MazeEntity, UUID> {
+public interface MazeRepository extends JpaRepository<MazeEntity, Integer> {
 
     /**
      * Find all mazes created before the given timestamp

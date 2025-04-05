@@ -43,7 +43,7 @@ public class MazeServiceImpl implements MazeService {
     }
 
     @Override
-    public Optional<Maze> getMazeById(UUID id) {
+    public Optional<Maze> getMazeById(Integer id) {
         return mazeRepository.findById(id).map(MazeEntity::toDomain);
     }
 
@@ -53,12 +53,12 @@ public class MazeServiceImpl implements MazeService {
     }
 
     @Override
-    public void deleteMaze(UUID id) {
+    public void deleteMaze(Integer id) {
         mazeRepository.deleteById(id);
     }
 
     @Override
-    public Optional<List<Position>> solveMaze(UUID id) {
+    public Optional<List<Position>> solveMaze(Integer id) {
         Optional<MazeEntity> mazeEntityOpt = mazeRepository.findById(id);
 
         if (mazeEntityOpt.isPresent()) {

@@ -3,7 +3,7 @@ SET search_path TO maze_solver, public;
 
 -- Create table in the maze_solver schema
 CREATE TABLE maze_solver.mazes (
-    id UUID PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     maze_data TEXT NOT NULL,
     width INT NOT NULL,
     height INT NOT NULL,

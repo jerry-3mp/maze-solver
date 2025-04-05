@@ -3,10 +3,8 @@ package io.jistud.mazesolver.server.entity;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,10 +20,9 @@ import jakarta.persistence.*;
 public class MazeEntity {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    private Integer id;
 
     @Column(name = "maze_data", nullable = false, columnDefinition = "TEXT")
     private String mazeData;
@@ -67,7 +64,7 @@ public class MazeEntity {
 
     // Constructor with all fields
     public MazeEntity(
-            UUID id,
+            Integer id,
             String mazeData,
             int width,
             int height,
@@ -203,11 +200,11 @@ public class MazeEntity {
     }
 
     // Getters and setters
-    public UUID getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

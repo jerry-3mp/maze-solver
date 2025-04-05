@@ -3,7 +3,6 @@ package io.jistud.mazesolver.server.entity;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +16,7 @@ class MazeEntityTest {
     @Test
     void testCreateMazeEntity() {
         // Given
-        UUID id = UUID.randomUUID();
+        int id = 1;
         String mazeData = "w w w\ns . w\nw e w";
         int width = 3;
         int height = 3;
@@ -104,7 +103,7 @@ class MazeEntityTest {
     void testConvertToDomainModel() {
         // Given
         MazeEntity entity = new MazeEntity();
-        entity.setId(UUID.randomUUID());
+        entity.setId(1);
         entity.setMazeData("www\nsew\nwww");
         entity.setWidth(3);
         entity.setHeight(3);

@@ -2,7 +2,6 @@ package io.jistud.mazesolver.server.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import io.jistud.mazesolver.server.model.Maze;
 import io.jistud.mazesolver.server.model.Position;
@@ -27,7 +26,7 @@ public interface MazeService {
      * @param id the ID of the maze
      * @return an Optional containing the maze if found, or empty if not found
      */
-    Optional<Maze> getMazeById(UUID id);
+    Optional<Maze> getMazeById(Integer id);
 
     /**
      * Get all stored mazes
@@ -41,7 +40,7 @@ public interface MazeService {
      *
      * @param id the ID of the maze to delete
      */
-    void deleteMaze(UUID id);
+    void deleteMaze(Integer id);
 
     /**
      * Solve a maze by finding a path from start to end
@@ -49,5 +48,5 @@ public interface MazeService {
      * @param id the ID of the maze to solve
      * @return an Optional containing the solution path if a solution exists, or empty if not
      */
-    Optional<List<Position>> solveMaze(UUID id);
+    Optional<List<Position>> solveMaze(Integer id);
 }
