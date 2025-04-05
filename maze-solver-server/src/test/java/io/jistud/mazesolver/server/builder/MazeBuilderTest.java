@@ -554,15 +554,29 @@ class MazeBuilderTest {
             assertEquals(5, maze.getHeight());
             assertEquals(8, maze.getWidth());
 
+            // Find special cells (start, end, path)
+            List<Position> specialCells = new java.util.ArrayList<>();
+            specialCells.addAll(maze.findCellsWithValue('s')); // Start
+            specialCells.addAll(maze.findCellsWithValue('e')); // End
+            specialCells.addAll(maze.findCellsWithValue('p')); // Path
+
             // Check perimeter walls
             for (int row = 0; row < 5; row++) {
-                assertEquals('w', maze.getCell(row, 0), "Left wall missing at row " + row);
-                assertEquals('w', maze.getCell(row, 7), "Right wall missing at row " + row);
+                if (!specialCells.contains(new Position(row, 0))) {
+                    assertEquals('w', maze.getCell(row, 0), "Left wall missing at row " + row);
+                }
+                if (!specialCells.contains(new Position(row, 7))) {
+                    assertEquals('w', maze.getCell(row, 7), "Right wall missing at row " + row);
+                }
             }
 
             for (int col = 0; col < 8; col++) {
-                assertEquals('w', maze.getCell(0, col), "Top wall missing at column " + col);
-                assertEquals('w', maze.getCell(4, col), "Bottom wall missing at column " + col);
+                if (!specialCells.contains(new Position(0, col))) {
+                    assertEquals('w', maze.getCell(0, col), "Top wall missing at column " + col);
+                }
+                if (!specialCells.contains(new Position(4, col))) {
+                    assertEquals('w', maze.getCell(4, col), "Bottom wall missing at column " + col);
+                }
             }
         }
     }

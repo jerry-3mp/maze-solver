@@ -470,7 +470,16 @@ public class MazeBuilder {
 
         @Override
         public FinalStage withEmptyPath() {
-            throw new UnsupportedOperationException("Method not implemented yet");
+            // Unmark path cells
+            for (int row = 0; row < height; row++) {
+                for (int col = 0; col < width; col++) {
+                    if (grid[row][col] == 'p') {
+                        grid[row][col] = ' ';
+                    }
+                }
+            }
+
+            return this;
         }
 
         @Override
