@@ -1,0 +1,45 @@
+@startuml MazeBuilder State Diagram
+
+title MazeBuilder State Diagram - Staged Builder Pattern
+
+[*] --> DimensionStage : MazeBuilder.builder()
+
+state DimensionStage {
+  [*] --> InitialDimension
+  InitialDimension --> HasHeight : height(int)
+  HasHeight --> HasHeight : height(int)
+  HasHeight --> PositionStage : width(int)
+}
+
+state PositionStage {
+  [*] --> NoPositions
+  NoPositions --> HasStart : start(row, col)
+  NoPositions --> PathStage : randomStartAndEnd()
+  HasStart --> PathStage : end(row, col)
+}
+
+state PathStage {
+  [*] --> NoPath
+  NoPath --> WallStage : withRandomPath()
+}
+
+state WallStage {
+  [*] --> BasicWalls
+  BasicWalls --> BasicWalls : withRandomWalls(density)
+  BasicWalls --> FinalStage : withPerimeterWalls()
+}
+
+state FinalStage {
+  [*] --> ReadyForBuild
+  ReadyForBuild --> ReadyForBuild : withEmptyPath()
+  ReadyForBuild --> Final : build()
+}
+
+state Final {
+  [*] --> HasMaze : «Maze Object Created»
+}
+
+
+Final --> [*]
+
+@enduml
