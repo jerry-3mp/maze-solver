@@ -1,6 +1,7 @@
 package io.jistud.mazesolver.server.builder;
 
 import io.jistud.mazesolver.server.model.Maze;
+import io.jistud.mazesolver.server.model.Position;
 
 /**
  * Builder for creating and configuring Maze objects.
@@ -19,7 +20,7 @@ public class MazeBuilder {
      * @return a new DimensionStage builder
      */
     public static DimensionStage builder() {
-        throw new UnsupportedOperationException("Method not implemented yet");
+        return new BuilderImpl();
     }
 
     /**
@@ -144,29 +145,89 @@ public class MazeBuilder {
      * Internal implementation of the builder with stage transitions.
      */
     private static class BuilderImpl implements DimensionStage, PositionStage, PathStage, WallStage, FinalStage {
+        private int height;
+        private int width;
+        private Position startPosition;
+        private Position endPosition;
+        private char[][] grid;
+
         @Override
         public DimensionStage height(int height) {
-            throw new UnsupportedOperationException("Method not implemented yet");
+            if (height < 5) {
+                throw new IllegalArgumentException("Height must be at least 2, but was " + height);
+            }
+            this.height = height;
+            return this;
         }
 
         @Override
         public PositionStage width(int width) {
-            throw new UnsupportedOperationException("Method not implemented yet");
+            if (width < 5) {
+                throw new IllegalArgumentException("Width must be at least 2, but was " + width);
+            }
+            this.width = width;
+            return this;
         }
 
         @Override
         public PositionStage start(int row, int col) {
-            throw new UnsupportedOperationException("Method not implemented yet");
+            validatePosition(row, col, "Start position");
+            this.startPosition = new Position(row, col);
+            return this;
         }
 
         @Override
         public PathStage end(int row, int col) {
-            throw new UnsupportedOperationException("Method not implemented yet");
+            validatePosition(row, col, "End position");
+            Position endPos = new Position(row, col);
+
+            if (endPos.equals(startPosition)) {
+                throw new IllegalArgumentException("End position cannot be the same as start position");
+            }
+
+            this.endPosition = endPos;
+            return this;
         }
 
         @Override
         public PathStage randomStartAndEnd() {
-            throw new UnsupportedOperationException("Method not implemented yet");
+            // Generate random start and end positions on opposite sides when possible
+            java.util.Random random = new java.util.Random();
+
+            // Decide if positioning horizontally or vertically
+            boolean horizontalPlacement = random.nextBoolean();
+
+            if (horizontalPlacement) {
+                // Start on left, end on right (or vice versa)
+                int startRow = 1 + random.nextInt(height - 2);
+                int endRow = 1 + random.nextInt(height - 2);
+
+                if (random.nextBoolean()) {
+                    // Start on left, end on right
+                    this.startPosition = new Position(startRow, 1);
+                    this.endPosition = new Position(endRow, width - 2);
+                } else {
+                    // Start on right, end on left
+                    this.startPosition = new Position(startRow, width - 2);
+                    this.endPosition = new Position(endRow, 1);
+                }
+            } else {
+                // Start on top, end on bottom (or vice versa)
+                int startCol = 1 + random.nextInt(width - 2);
+                int endCol = 1 + random.nextInt(width - 2);
+
+                if (random.nextBoolean()) {
+                    // Start on top, end on bottom
+                    this.startPosition = new Position(1, startCol);
+                    this.endPosition = new Position(height - 2, endCol);
+                } else {
+                    // Start on bottom, end on top
+                    this.startPosition = new Position(height - 2, startCol);
+                    this.endPosition = new Position(1, endCol);
+                }
+            }
+
+            return this;
         }
 
         @Override
@@ -192,6 +253,25 @@ public class MazeBuilder {
         @Override
         public Maze build() {
             throw new UnsupportedOperationException("Method not implemented yet");
+        }
+
+        /**
+         * Validates that a position is within the maze boundaries.
+         *
+         * @param row the row index to validate
+         * @param col the column index to validate
+         * @param positionName name of the position for error message
+         * @throws IllegalArgumentException if the position is outside the maze boundaries
+         */
+        private void validatePosition(int row, int col, String positionName) {
+            if (row < 0 || row >= height) {
+                throw new IllegalArgumentException(
+                        positionName + " row must be between 0 and " + (height - 1) + ", but was " + row);
+            }
+            if (col < 0 || col >= width) {
+                throw new IllegalArgumentException(
+                        positionName + " column must be between 0 and " + (width - 1) + ", but was " + col);
+            }
         }
     }
 }

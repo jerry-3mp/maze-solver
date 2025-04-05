@@ -204,6 +204,9 @@ Brief overview of what implementation changes will be made and why.
 ├── docker-compose.yml
 ├── maze-solver-server
 │   ├── HELP.md
+│   ├── README-GITHUB-ACTIONS.md
+│   ├── diagrams
+│   │   └── maze-builder-state-diagram.puml
 │   ├── events
 │   │   └── event.json
 │   ├── mvnw
@@ -220,10 +223,15 @@ Brief overview of what implementation changes will be made and why.
 │   │   │   │               └── server
 │   │   │   │                   ├── MazeSolverServerApplication.java
 │   │   │   │                   ├── StreamLambdaHandler.java
+│   │   │   │                   ├── builder
+│   │   │   │                   │   └── MazeBuilder.java
 │   │   │   │                   ├── config
 │   │   │   │                   │   └── SwaggerConfig.java
-│   │   │   │                   └── controller
-│   │   │   │                       └── StatusController.java
+│   │   │   │                   ├── controller
+│   │   │   │                   │   └── StatusController.java
+│   │   │   │                   └── model
+│   │   │   │                       ├── Maze.java
+│   │   │   │                       └── Position.java
 │   │   │   └── resources
 │   │   │       ├── application-lambda.properties
 │   │   │       ├── application-local.properties
@@ -240,7 +248,11 @@ Brief overview of what implementation changes will be made and why.
 │   │               └── jistud
 │   │                   └── mazesolver
 │   │                       └── server
-│   │                           └── MazeSolverServerApplicationTests.java
+│   │                           ├── MazeSolverServerApplicationTests.java
+│   │                           ├── builder
+│   │                           │   └── MazeBuilderTest.java
+│   │                           └── model
+│   │                               └── MazeTest.java
 │   └── template.yaml
 └── maze-solver-tdd-mcp-workflow.md
 ```
