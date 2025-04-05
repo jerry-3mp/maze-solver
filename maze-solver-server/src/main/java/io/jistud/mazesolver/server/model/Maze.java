@@ -181,7 +181,7 @@ public class Maze {
         return positions;
     }
 
-    public void solve() {
+    public boolean solve() {
         Position startPosition = null;
         Position endPosition = null;
 
@@ -194,18 +194,26 @@ public class Maze {
 
         startPosition = startPositions.getFirst();
         endPosition = endPositions.getFirst();
-        java.util.List<Position> pathSteps = new java.util.ArrayList<>();
         java.util.Set<Position> visited = new java.util.HashSet<>();
-        java.util.List<Position> ans = dfsTraverse(startPosition, endPosition, visited, pathSteps);
+        List<Position> ans = dfsTraverse(startPosition, endPosition, visited, new java.util.ArrayList<>());
+        if (ans == null || ans.isEmpty()) {
+            return false;
+        } else {
+            for (Position position : ans) {
+                char cell = grid[position.row()][position.col()];
+                if (cell == EMPTY) grid[position.row()][position.col()] = PATH;
+            }
+            return true;
+        }
     }
 
-    private List<Position> dfsTraverse(Position currentPosition, Position endPosition, Set<Position> visited, List<Position> pathSteps) {
-        pathSteps.add(currentPosition);
+    private List<Position> dfsTraverse(
+            Position currentPosition, Position endPosition, Set<Position> visited, List<Position> pathSteps) {
+        if (currentPosition == null || visited.contains(currentPosition)) return null;
         visited.add(currentPosition);
-        System.out.printf("%d %d\n", currentPosition.row(), currentPosition.col());
-        System.out.println(visited);
-        System.out.println(pathSteps);
-        if (currentPosition.equals(endPosition)) return pathSteps;
+        List<Position> newPathSteps = new java.util.ArrayList<>(pathSteps);
+        newPathSteps.add(currentPosition);
+        if (currentPosition.equals(endPosition)) return newPathSteps;
         int rowIndex = currentPosition.row();
         int colIndex = currentPosition.col();
         Position upPosition = null;
@@ -224,16 +232,14 @@ public class Maze {
         if (isValidPosition(rowIndex, colIndex + 1) && grid[rowIndex][colIndex + 1] != Maze.WALL) {
             rightPosition = new Position(rowIndex, colIndex + 1);
         }
-        if (upPosition != null && !visited.contains(upPosition)) {
-            return dfsTraverse(upPosition, endPosition, visited, pathSteps);
-        } else if (downPosition != null && !visited.contains(downPosition)) {
-            return dfsTraverse(downPosition, endPosition, visited, pathSteps);
-        } else if (leftPosition != null && !visited.contains(leftPosition)) {
-            return dfsTraverse(leftPosition, endPosition, visited, pathSteps);
-        } else if (rightPosition != null && !visited.contains(rightPosition)) {
-            return dfsTraverse(rightPosition, endPosition, visited, pathSteps);
-        }
-        return null;
+        List<Position> upPathSteps = dfsTraverse(upPosition, endPosition, visited, newPathSteps);
+        if (upPathSteps != null) return upPathSteps;
+        List<Position> downPathSteps = dfsTraverse(downPosition, endPosition, visited, newPathSteps);
+        if (downPathSteps != null) return downPathSteps;
+        List<Position> leftPathSteps = dfsTraverse(leftPosition, endPosition, visited, newPathSteps);
+        if (leftPathSteps != null) return leftPathSteps;
+        List<Position> rightPathSteps = dfsTraverse(rightPosition, endPosition, visited, newPathSteps);
+        return rightPathSteps;
     }
 
     /**

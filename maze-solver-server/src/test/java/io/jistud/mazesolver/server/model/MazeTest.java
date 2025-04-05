@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import io.jistud.mazesolver.server.builder.MazeBuilder;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MazeTest {
@@ -108,5 +110,40 @@ class MazeTest {
         String expected = "s  \n" + " w \n" + "  e\n";
 
         assertEquals(expected, maze.toString());
+    }
+
+    @Test
+    @DisplayName("solve should solve the maze correctly")
+    void solve() {
+        char[][] grid = {
+            {' ', ' ', 'w', ' ', 'w', 'w', 'w', 'w'},
+            {'w', 's', 'w', ' ', ' ', ' ', ' ', 'w'},
+            {' ', ' ', ' ', ' ', ' ', 'w', ' ', 'w'},
+            {' ', ' ', 'w', 'w', ' ', 'w', 'e', 'w'},
+            {'w', 'w', 'w', 'w', ' ', ' ', ' ', 'w'}
+        };
+        Maze maze = new Maze(5, 8, grid);
+        Boolean isSolvalbe = maze.solve();
+        String solvedMaze = "  w wwww\n" + "wswpp  w\n" + " ppppw w\n" + "  wwpwew\n" + "wwwwpppw\n";
+
+        assertEquals(true, isSolvalbe);
+        assertEquals(solvedMaze, maze.toString());
+    }
+
+    @Test
+    @DisplayName("solve should solve the random maze correctly")
+    void solveRandom() {
+        Maze maze = MazeBuilder.builder()
+                .height(5)
+                .width(8)
+                .start(1, 1)
+                .end(3, 6)
+                .withRandomPath()
+                .withRandomWalls(0.5)
+                .withPerimeterWalls()
+                .withEmptyPath()
+                .build();
+        Boolean isSolvalbe = maze.solve();
+        assertEquals(true, isSolvalbe);
     }
 }
