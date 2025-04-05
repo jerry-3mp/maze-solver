@@ -5,6 +5,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import io.jistud.mazesolver.server.builder.MazeBuilder;
@@ -36,20 +38,112 @@ public class MazeServiceImpl implements MazeService {
                 .build();
 
         // Save the maze to the database
-        MazeEntity entity = MazeEntity.fromDomain(maze);
+        MazeEntity entity = convertToEntity(maze);
         mazeRepository.save(entity);
 
         return maze;
     }
 
     @Override
-    public Optional<Maze> getMazeById(Integer id) {
-        return mazeRepository.findById(id).map(MazeEntity::toDomain);
+    public Optional<MazeEntity> findById(Integer id) {
+        return mazeRepository.findById(id);
     }
 
     @Override
-    public List<Maze> getAllMazes() {
-        return mazeRepository.findAll().stream().map(MazeEntity::toDomain).collect(Collectors.toList());
+    public Page<MazeEntity> findAll(Pageable pageable) {
+        return mazeRepository.findAll(pageable);
+    }
+
+    @Override
+    public Maze convertToModel(MazeEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        // Parse the maze data into a 2D grid
+        String[] rows = entity.getMazeData().split("\n");
+        int height = rows.length;
+        int width = rows[0].length();
+
+        char[][] grid = new char[height][width];
+
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                char cell = rows[row].charAt(col);
+                grid[row][col] = cell;
+            }
+        }
+
+        Maze maze = new Maze(height, width, grid);
+
+        // Parse solution path if present
+        if (entity.isSolved() && entity.getSolutionPath() != null) {
+            // Expected format: "[(row,col), (row,col), ...]"
+            String pathStr = entity.getSolutionPath().trim();
+
+            // Remove the outer brackets and split by comma-space
+            if (pathStr.startsWith("[") && pathStr.endsWith("]")) {
+                pathStr = pathStr.substring(1, pathStr.length() - 1);
+                String[] positions = pathStr.split(", ");
+
+                List<Position> solutionPath = new ArrayList<>();
+                for (String posStr : positions) {
+                    // Format: (row,col)
+                    if (posStr.startsWith("(") && posStr.endsWith(")")) {
+                        posStr = posStr.substring(1, posStr.length() - 1);
+                        String[] coords = posStr.split(",");
+                        int row = Integer.parseInt(coords[0]);
+                        int col = Integer.parseInt(coords[1]);
+                        solutionPath.add(new Position(row, col));
+                    }
+                }
+
+                maze.setSolvedPath(solutionPath);
+            }
+        }
+
+        return maze;
+    }
+
+    /**
+     * Convert a maze model to a maze entity
+     *
+     * @param maze the maze model
+     * @return the maze entity
+     */
+    private MazeEntity convertToEntity(Maze maze) {
+        if (maze == null) {
+            return null;
+        }
+
+        MazeEntity entity = new MazeEntity();
+
+        // Convert grid to string representation
+        char[][] grid = maze.getGrid();
+        StringBuilder mazeData = new StringBuilder();
+
+        for (int row = 0; row < grid.length; row++) {
+            if (row > 0) {
+                mazeData.append("\n");
+            }
+            mazeData.append(new String(grid[row]));
+        }
+
+        entity.setMazeData(mazeData.toString());
+        entity.setCreatedAt(Instant.now());
+        entity.setUpdatedAt(Instant.now());
+        entity.setSolved(maze.isSolved());
+
+        // Convert solution path if present
+        if (maze.isSolved() && maze.getSolvedPath() != null) {
+            String pathStr = maze.getSolvedPath().stream()
+                    .map(pos -> "(" + pos.row() + "," + pos.col() + ")")
+                    .collect(Collectors.joining(", "));
+
+            entity.setSolutionPath("[" + pathStr + "]");
+        }
+
+        return entity;
     }
 
     @Override
@@ -58,45 +152,36 @@ public class MazeServiceImpl implements MazeService {
     }
 
     @Override
-    public Optional<List<Position>> solveMaze(Integer id) {
+    public Optional<MazeEntity> solveMaze(Integer id) {
         Optional<MazeEntity> mazeEntityOpt = mazeRepository.findById(id);
 
         if (mazeEntityOpt.isPresent()) {
             MazeEntity entity = mazeEntityOpt.get();
 
             // If already solved, return the existing solution
-            if (entity.isSolved()
-                    && entity.getSolutionPath() != null
-                    && !entity.getSolutionPath().isEmpty()) {
-                List<Position> positions = Arrays.stream(
-                                entity.getSolutionPath().split(";"))
-                        .map(pair -> {
-                            String[] coords = pair.split(",");
-                            return new Position(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]));
-                        })
-                        .collect(Collectors.toList());
-                return Optional.of(positions);
+            if (entity.isSolved() && entity.getSolutionPath() != null) {
+                return Optional.of(entity);
             }
 
             // Otherwise, solve the maze
-            Maze maze = entity.toDomain();
+            Maze maze = convertToModel(entity);
             boolean solved = maze.solve();
 
             if (solved) {
                 // Update the entity with the solution
                 entity.setSolved(true);
-                entity.setSolutionPath(maze.getSolvedPath().stream()
-                        .map(p -> p.row() + "," + p.col())
-                        .collect(Collectors.joining(";")));
+
+                // Convert solution path to string representation
+                String pathStr = maze.getSolvedPath().stream()
+                        .map(pos -> "(" + pos.row() + "," + pos.col() + ")")
+                        .collect(Collectors.joining(", "));
+
+                entity.setSolutionPath("[" + pathStr + "]");
                 entity.setUpdatedAt(Instant.now());
 
                 // Save the updated entity
-                mazeRepository.save(entity);
-
-                return Optional.of(maze.getSolvedPath());
+                return Optional.of(mazeRepository.save(entity));
             }
-
-            return Optional.empty();
         }
 
         return Optional.empty();

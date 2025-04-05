@@ -116,6 +116,10 @@ public class Maze {
         return width;
     }
 
+    public char[][] getGrid() {
+        return grid;
+    }
+
     /**
      * Gets the value of the cell at the specified position.
      *

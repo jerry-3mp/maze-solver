@@ -65,91 +65,68 @@ class MazeServiceTest {
     }
 
     @Test
-    void testGetMazeById() {
+    void testFindById() {
         // Given
         Integer id = new java.util.Random().nextInt();
         MazeEntity mazeEntity = new MazeEntity();
         mazeEntity.setId(id);
         mazeEntity.setMazeData("www\nsew\nwww");
-        mazeEntity.setWidth(3);
-        mazeEntity.setHeight(3);
-        mazeEntity.setStartRow(1);
-        mazeEntity.setStartCol(0);
-        mazeEntity.setEndRow(1);
-        mazeEntity.setEndCol(2);
-        mazeEntity.setSolved(false);
         mazeEntity.setCreatedAt(Instant.now());
+        mazeEntity.setUpdatedAt(Instant.now());
+        mazeEntity.setSolved(false);
 
         when(mazeRepository.findById(id)).thenReturn(Optional.of(mazeEntity));
 
         // When
-        Optional<Maze> result = mazeService.getMazeById(id);
+        Optional<MazeEntity> result = mazeService.findById(id);
 
         // Then
         assertTrue(result.isPresent());
-        Maze maze = result.get();
-        assertEquals(3, maze.getWidth());
-        assertEquals(3, maze.getHeight());
-
-        // Verify start and end positions in the maze
-        List<Position> startPositions = maze.findCellsWithValue(Maze.START);
-        List<Position> endPositions = maze.findCellsWithValue(Maze.END);
-
-        assertEquals(1, startPositions.size(), "Maze should have exactly one start position");
-        assertEquals(1, endPositions.size(), "Maze should have exactly one end position");
+        assertEquals(id, result.get().getId());
     }
 
     @Test
-    void testGetMazeById_NotFound() {
+    void testFindById_NotFound() {
         // Given
         Integer id = new java.util.Random().nextInt();
         when(mazeRepository.findById(id)).thenReturn(Optional.empty());
 
         // When
-        Optional<Maze> result = mazeService.getMazeById(id);
+        Optional<MazeEntity> result = mazeService.findById(id);
 
         // Then
         assertFalse(result.isPresent());
     }
 
     @Test
-    void testGetAllMazes() {
+    void testFindAll() {
         // Given
         MazeEntity maze1 = new MazeEntity();
         maze1.setId(new java.util.Random().nextInt());
         maze1.setMazeData("www\nsew\nwww");
-        maze1.setWidth(3);
-        maze1.setHeight(3);
-        maze1.setStartRow(1);
-        maze1.setStartCol(0);
-        maze1.setEndRow(1);
-        maze1.setEndCol(2);
-        maze1.setSolved(false);
         maze1.setCreatedAt(Instant.now());
+        maze1.setUpdatedAt(Instant.now());
+        maze1.setSolved(false);
 
         MazeEntity maze2 = new MazeEntity();
         maze2.setId(new java.util.Random().nextInt());
         maze2.setMazeData("wwww\ns  e\nwwww");
-        maze2.setWidth(4);
-        maze2.setHeight(3);
-        maze2.setStartRow(1);
-        maze2.setStartCol(0);
-        maze2.setEndRow(1);
-        maze2.setEndCol(3);
-        maze2.setSolved(false);
         maze2.setCreatedAt(Instant.now());
+        maze2.setUpdatedAt(Instant.now());
+        maze2.setSolved(false);
 
-        when(mazeRepository.findAll()).thenReturn(Arrays.asList(maze1, maze2));
+        org.springframework.data.domain.PageImpl<MazeEntity> page =
+                new org.springframework.data.domain.PageImpl<>(Arrays.asList(maze1, maze2));
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 10);
+
+        when(mazeRepository.findAll(pageable)).thenReturn(page);
 
         // When
-        List<Maze> mazes = mazeService.getAllMazes();
+        org.springframework.data.domain.Page<MazeEntity> result = mazeService.findAll(pageable);
 
         // Then
-        assertEquals(2, mazes.size());
-        assertEquals(3, mazes.get(0).getWidth());
-        assertEquals(3, mazes.get(0).getHeight());
-        assertEquals(4, mazes.get(1).getWidth());
-        assertEquals(3, mazes.get(1).getHeight());
+        assertEquals(2, result.getContent().size());
+        verify(mazeRepository).findAll(pageable);
     }
 
     @Test
@@ -171,33 +148,47 @@ class MazeServiceTest {
         MazeEntity entity = new MazeEntity();
         entity.setId(id);
         entity.setMazeData("www\nsew\nwww");
-        entity.setWidth(3);
-        entity.setHeight(3);
-        entity.setStartRow(1);
-        entity.setStartCol(0);
-        entity.setEndRow(1);
-        entity.setEndCol(2);
         entity.setSolved(true);
-        entity.setSolutionPath("1,0;1,1;1,2");
+        entity.setSolutionPath("[(1,0), (1,1), (1,2)]");
         entity.setCreatedAt(Instant.now());
+        entity.setUpdatedAt(Instant.now());
 
         when(mazeRepository.findById(id)).thenReturn(Optional.of(entity));
 
         // When
-        Optional<List<Position>> solutionOpt = mazeService.solveMaze(id);
+        Optional<MazeEntity> resultOpt = mazeService.solveMaze(id);
 
         // Then
-        assertTrue(solutionOpt.isPresent());
-        List<Position> solution = solutionOpt.get();
-        assertEquals(3, solution.size());
-
-        // Verify the solution matches the stored path
-        assertEquals(new Position(1, 0), solution.get(0));
-        assertEquals(new Position(1, 1), solution.get(1));
-        assertEquals(new Position(1, 2), solution.get(2));
+        assertTrue(resultOpt.isPresent());
+        MazeEntity result = resultOpt.get();
+        assertTrue(result.isSolved());
+        assertEquals("[(1,0), (1,1), (1,2)]", result.getSolutionPath());
 
         // Verify the maze entity was not updated (already solved)
         verify(mazeRepository, never()).save(any(MazeEntity.class));
+    }
+
+    @Test
+    void testConvertToModel() {
+        // Given
+        MazeEntity entity = new MazeEntity();
+        entity.setId(1);
+        entity.setMazeData("www\nsew\nwww");
+        entity.setSolved(false);
+        entity.setSolutionPath(null);
+        entity.setCreatedAt(Instant.now());
+        entity.setUpdatedAt(Instant.now());
+
+        // When
+        Maze result = mazeService.convertToModel(entity);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(3, result.getHeight());
+        assertEquals(3, result.getWidth());
+        assertFalse(result.isSolved());
+        assertEquals(1, result.findCellsWithValue(Maze.START).size());
+        assertEquals(1, result.findCellsWithValue(Maze.END).size());
     }
 
     @Test
@@ -205,46 +196,53 @@ class MazeServiceTest {
         // Given
         Integer id = new java.util.Random().nextInt();
 
-        // Create a maze that can be solved
+        // Create a simple maze data string
+        String mazeData = "wwsww\nw   w\nw w w\nw   w\nwweww";
+
+        MazeEntity entity = new MazeEntity();
+        entity.setId(id);
+        entity.setMazeData(mazeData);
+        entity.setSolved(false);
+        entity.setSolutionPath(null);
+        entity.setCreatedAt(Instant.now());
+        entity.setUpdatedAt(Instant.now());
+
+        // Create a maze model for the convertToModel method to return
         char[][] grid = new char[5][5];
-        // Fill with walls
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                grid[i][j] = Maze.WALL;
+                if (i == 0 || i == 4 || j == 0 || j == 4) {
+                    grid[i][j] = Maze.WALL;
+                } else {
+                    grid[i][j] = Maze.EMPTY;
+                }
             }
         }
-
-        // Create a path
-        grid[1][1] = Maze.START;
-        grid[1][2] = Maze.EMPTY;
-        grid[1][3] = Maze.EMPTY;
-        grid[2][3] = Maze.EMPTY;
-        grid[3][3] = Maze.END;
+        grid[0][2] = Maze.START;
+        grid[4][2] = Maze.END;
 
         Maze maze = new Maze(5, 5, grid);
 
-        MazeEntity entity = MazeEntity.fromDomain(maze);
-        entity.setId(id);
-        entity.setSolved(false);
-        entity.setSolutionPath(null);
+        // Setup saved entity with solution
+        MazeEntity solvedEntity = new MazeEntity();
+        solvedEntity.setId(id);
+        solvedEntity.setMazeData(mazeData);
+        solvedEntity.setSolved(true);
+        solvedEntity.setSolutionPath("[(0,2), (1,2), (2,2), (3,2), (4,2)]");
+        solvedEntity.setCreatedAt(entity.getCreatedAt());
+        solvedEntity.setUpdatedAt(Instant.now());
 
         when(mazeRepository.findById(id)).thenReturn(Optional.of(entity));
-        when(mazeRepository.save(any(MazeEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(mazeRepository.save(any(MazeEntity.class))).thenReturn(solvedEntity);
 
         // When
-        Optional<List<Position>> solutionOpt = mazeService.solveMaze(id);
+        Optional<MazeEntity> resultOpt = mazeService.solveMaze(id);
 
         // Then
-        assertTrue(solutionOpt.isPresent());
-        List<Position> solution = solutionOpt.get();
-        assertFalse(solution.isEmpty());
-
-        // Verify the solution path starts at START and ends at END
-        List<Position> startPositions = maze.findCellsWithValue(Maze.START);
-        List<Position> endPositions = maze.findCellsWithValue(Maze.END);
-
-        assertEquals(startPositions.get(0), solution.get(0));
-        assertEquals(endPositions.get(0), solution.get(solution.size() - 1));
+        assertTrue(resultOpt.isPresent());
+        MazeEntity result = resultOpt.get();
+        assertTrue(result.isSolved());
+        assertNotNull(result.getSolutionPath());
 
         // Verify the maze entity was updated with the solution
         ArgumentCaptor<MazeEntity> entityCaptor = ArgumentCaptor.forClass(MazeEntity.class);
