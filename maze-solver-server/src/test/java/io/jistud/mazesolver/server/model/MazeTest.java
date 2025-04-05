@@ -16,7 +16,7 @@ class MazeTest {
 
         assertEquals(5, maze.getHeight());
         assertEquals(10, maze.getWidth());
-        assertEquals(' ', maze.getCell(2, 5));
+        assertEquals(Maze.EMPTY, maze.getCell(2, 5));
     }
 
     @Test
@@ -33,11 +33,11 @@ class MazeTest {
     void setCellAndGetCell() {
         Maze maze = new Maze(5, 5);
 
-        maze.setCell(2, 3, 'w');
-        assertEquals('w', maze.getCell(2, 3));
+        maze.setCell(2, 3, Maze.WALL);
+        assertEquals(Maze.WALL, maze.getCell(2, 3));
 
-        maze.setCell(1, 4, 's');
-        assertEquals('s', maze.getCell(1, 4));
+        maze.setCell(1, 4, Maze.START);
+        assertEquals(Maze.START, maze.getCell(1, 4));
     }
 
     @Test
@@ -62,10 +62,10 @@ class MazeTest {
     void setCellOutOfBounds() {
         Maze maze = new Maze(5, 5);
 
-        assertThrows(IndexOutOfBoundsException.class, () -> maze.setCell(5, 0, 'w'));
-        assertThrows(IndexOutOfBoundsException.class, () -> maze.setCell(0, 5, 'w'));
-        assertThrows(IndexOutOfBoundsException.class, () -> maze.setCell(-1, 0, 'w'));
-        assertThrows(IndexOutOfBoundsException.class, () -> maze.setCell(0, -1, 'w'));
+        assertThrows(IndexOutOfBoundsException.class, () -> maze.setCell(5, 0, Maze.WALL));
+        assertThrows(IndexOutOfBoundsException.class, () -> maze.setCell(0, 5, Maze.WALL));
+        assertThrows(IndexOutOfBoundsException.class, () -> maze.setCell(-1, 0, Maze.WALL));
+        assertThrows(IndexOutOfBoundsException.class, () -> maze.setCell(0, -1, Maze.WALL));
     }
 
     @Test
@@ -84,16 +84,16 @@ class MazeTest {
     void findCellsWithValue() {
         Maze maze = new Maze(5, 5);
 
-        maze.setCell(1, 1, 's');
-        maze.setCell(3, 3, 'e');
-        maze.setCell(2, 2, 'p');
-        maze.setCell(0, 4, 'p');
+        maze.setCell(1, 1, Maze.START);
+        maze.setCell(3, 3, Maze.END);
+        maze.setCell(2, 2, Maze.PATH);
+        maze.setCell(0, 4, Maze.PATH);
 
-        var startPositions = maze.findCellsWithValue('s');
+        var startPositions = maze.findCellsWithValue(Maze.START);
         assertEquals(1, startPositions.size());
         assertTrue(startPositions.stream().anyMatch(p -> p.row() == 1 && p.col() == 1));
 
-        var pathPositions = maze.findCellsWithValue('p');
+        var pathPositions = maze.findCellsWithValue(Maze.PATH);
         assertEquals(2, pathPositions.size());
     }
 
@@ -101,17 +101,11 @@ class MazeTest {
     @DisplayName("toString should display a human-readable representation of the maze")
     void testToString() {
         Maze maze = new Maze(3, 3);
-        maze.setCell(0, 0, 's');
-        maze.setCell(2, 2, 'e');
-        maze.setCell(1, 1, 'w');
+        maze.setCell(0, 0, Maze.START);
+        maze.setCell(2, 2, Maze.END);
+        maze.setCell(1, 1, Maze.WALL);
 
-        String expected =
-                """
-                          s  \s
-                           w \s
-                            e\s
-                          """
-                        .stripIndent();
+        String expected = "s  \n" + " w \n" + "  e\n";
 
         assertEquals(expected, maze.toString());
     }

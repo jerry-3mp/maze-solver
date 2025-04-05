@@ -238,8 +238,8 @@ public class MazeBuilder {
             }
 
             // Mark start and end positions
-            grid[startPosition.row()][startPosition.col()] = 's';
-            grid[endPosition.row()][endPosition.col()] = 'e';
+            grid[startPosition.row()][startPosition.col()] = Maze.START;
+            grid[endPosition.row()][endPosition.col()] = Maze.END;
 
             // Generate random path from start to end
             generateRandomPath();
@@ -256,7 +256,7 @@ public class MazeBuilder {
             // Fill grid with empty cells
             for (int row = 0; row < height; row++) {
                 for (int col = 0; col < width; col++) {
-                    grid[row][col] = ' ';
+                    grid[row][col] = Maze.EMPTY;
                 }
             }
         }
@@ -333,7 +333,7 @@ public class MazeBuilder {
             for (Position pos : pathSteps) {
                 // Don't overwrite start and end markers
                 if (!pos.equals(startPosition) && !pos.equals(endPosition)) {
-                    grid[pos.row()][pos.col()] = 'p';
+                    grid[pos.row()][pos.col()] = Maze.PATH;
                 }
             }
         }
@@ -403,7 +403,7 @@ public class MazeBuilder {
             java.util.List<Position> emptyPositions = new java.util.ArrayList<>();
             for (int row = 0; row < height; row++) {
                 for (int col = 0; col < width; col++) {
-                    if (tempGrid[row][col] == ' ') {
+                    if (tempGrid[row][col] == Maze.EMPTY) {
                         emptyPositions.add(new Position(row, col));
                     }
                 }
@@ -425,7 +425,7 @@ public class MazeBuilder {
                 }
 
                 // Add a wall at this position
-                grid[pos.row()][pos.col()] = 'w';
+                grid[pos.row()][pos.col()] = Maze.WALL;
                 wallsAdded++;
             }
 
@@ -442,26 +442,26 @@ public class MazeBuilder {
             // Add walls to the top and bottom rows, preserving special cells
             for (int col = 0; col < width; col++) {
                 // Top row - add wall only if not a special cell
-                if (grid[0][col] == ' ') {
-                    grid[0][col] = 'w';
+                if (grid[0][col] == Maze.EMPTY) {
+                    grid[0][col] = Maze.WALL;
                 }
 
                 // Bottom row - add wall only if not a special cell
-                if (grid[height - 1][col] == ' ') {
-                    grid[height - 1][col] = 'w';
+                if (grid[height - 1][col] == Maze.EMPTY) {
+                    grid[height - 1][col] = Maze.WALL;
                 }
             }
 
             // Add walls to the left and right columns, preserving special cells
             for (int row = 0; row < height; row++) {
                 // Left column - add wall only if not a special cell
-                if (grid[row][0] == ' ') {
-                    grid[row][0] = 'w';
+                if (grid[row][0] == Maze.EMPTY) {
+                    grid[row][0] = Maze.WALL;
                 }
 
                 // Right column - add wall only if not a special cell
-                if (grid[row][width - 1] == ' ') {
-                    grid[row][width - 1] = 'w';
+                if (grid[row][width - 1] == Maze.EMPTY) {
+                    grid[row][width - 1] = Maze.WALL;
                 }
             }
 
@@ -473,8 +473,8 @@ public class MazeBuilder {
             // Unmark path cells
             for (int row = 0; row < height; row++) {
                 for (int col = 0; col < width; col++) {
-                    if (grid[row][col] == 'p') {
-                        grid[row][col] = ' ';
+                    if (grid[row][col] == Maze.PATH) {
+                        grid[row][col] = Maze.EMPTY;
                     }
                 }
             }

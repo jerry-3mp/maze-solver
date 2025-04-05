@@ -210,8 +210,8 @@ class MazeBuilderTest {
                     .build();
 
             // Verify both mazes have walls
-            List<Position> lowDensityWalls = lowDensityMaze.findCellsWithValue('w');
-            List<Position> highDensityWalls = highDensityMaze.findCellsWithValue('w');
+            List<Position> lowDensityWalls = lowDensityMaze.findCellsWithValue(Maze.WALL);
+            List<Position> highDensityWalls = highDensityMaze.findCellsWithValue(Maze.WALL);
 
             assertFalse(lowDensityWalls.isEmpty(), "Low density maze should have walls");
             assertFalse(highDensityWalls.isEmpty(), "High density maze should have walls");
@@ -235,9 +235,9 @@ class MazeBuilderTest {
                     .build();
 
             // Verify we have a start, end, and path
-            List<Position> startPositions = maze.findCellsWithValue('s');
-            List<Position> endPositions = maze.findCellsWithValue('e');
-            List<Position> pathPositions = maze.findCellsWithValue('p');
+            List<Position> startPositions = maze.findCellsWithValue(Maze.START);
+            List<Position> endPositions = maze.findCellsWithValue(Maze.END);
+            List<Position> pathPositions = maze.findCellsWithValue(Maze.PATH);
 
             assertEquals(1, startPositions.size(), "Should have exactly one start position");
             assertEquals(1, endPositions.size(), "Should have exactly one end position");
@@ -331,16 +331,16 @@ class MazeBuilderTest {
 
             // Find special cells (start, end, path)
             List<Position> specialCells = new java.util.ArrayList<>();
-            specialCells.addAll(maze.findCellsWithValue('s')); // Start
-            specialCells.addAll(maze.findCellsWithValue('e')); // End
-            specialCells.addAll(maze.findCellsWithValue('p')); // Path
+            specialCells.addAll(maze.findCellsWithValue(Maze.START)); // Start
+            specialCells.addAll(maze.findCellsWithValue(Maze.END)); // End
+            specialCells.addAll(maze.findCellsWithValue(Maze.PATH)); // Path
 
             // Check top row (row 0)
             for (int col = 0; col < maze.getWidth(); col++) {
                 Position pos = new Position(0, col);
                 char cell = maze.getCell(0, col);
                 if (!specialCells.contains(pos)) {
-                    assertEquals('w', cell, "Top perimeter non-special cell should be a wall at column " + col);
+                    assertEquals(Maze.WALL, cell, "Top perimeter non-special cell should be a wall at column " + col);
                 }
             }
 
@@ -349,7 +349,8 @@ class MazeBuilderTest {
                 Position pos = new Position(maze.getHeight() - 1, col);
                 char cell = maze.getCell(maze.getHeight() - 1, col);
                 if (!specialCells.contains(pos)) {
-                    assertEquals('w', cell, "Bottom perimeter non-special cell should be a wall at column " + col);
+                    assertEquals(
+                            Maze.WALL, cell, "Bottom perimeter non-special cell should be a wall at column " + col);
                 }
             }
 
@@ -358,7 +359,7 @@ class MazeBuilderTest {
                 Position pos = new Position(row, 0);
                 char cell = maze.getCell(row, 0);
                 if (!specialCells.contains(pos)) {
-                    assertEquals('w', cell, "Left perimeter non-special cell should be a wall at row " + row);
+                    assertEquals(Maze.WALL, cell, "Left perimeter non-special cell should be a wall at row " + row);
                 }
             }
 
@@ -367,7 +368,7 @@ class MazeBuilderTest {
                 Position pos = new Position(row, maze.getWidth() - 1);
                 char cell = maze.getCell(row, maze.getWidth() - 1);
                 if (!specialCells.contains(pos)) {
-                    assertEquals('w', cell, "Right perimeter non-special cell should be a wall at row " + row);
+                    assertEquals(Maze.WALL, cell, "Right perimeter non-special cell should be a wall at row " + row);
                 }
             }
         }
@@ -384,14 +385,14 @@ class MazeBuilderTest {
                     .build();
 
             // Verify we have exactly one start and one end
-            List<Position> startPositions = maze.findCellsWithValue('s');
-            List<Position> endPositions = maze.findCellsWithValue('e');
+            List<Position> startPositions = maze.findCellsWithValue(Maze.START);
+            List<Position> endPositions = maze.findCellsWithValue(Maze.END);
 
             assertEquals(1, startPositions.size(), "Should have exactly one start position");
             assertEquals(1, endPositions.size(), "Should have exactly one end position");
 
             // Verify the path exists and connects start to end
-            List<Position> pathPositions = maze.findCellsWithValue('p');
+            List<Position> pathPositions = maze.findCellsWithValue(Maze.PATH);
             assertFalse(pathPositions.isEmpty(), "Should have a path from start to end");
 
             // Verify start and end are not on the perimeter (since randomStartAndEnd places them away from edges)
@@ -446,17 +447,17 @@ class MazeBuilderTest {
             assertEquals(10, maze.getWidth());
 
             // Verify start position
-            List<Position> startPositions = maze.findCellsWithValue('s');
+            List<Position> startPositions = maze.findCellsWithValue(Maze.START);
             assertEquals(1, startPositions.size());
             assertEquals(new Position(1, 1), startPositions.get(0));
 
             // Verify end position
-            List<Position> endPositions = maze.findCellsWithValue('e');
+            List<Position> endPositions = maze.findCellsWithValue(Maze.END);
             assertEquals(1, endPositions.size());
             assertEquals(new Position(8, 8), endPositions.get(0));
 
             // Verify that we have walls
-            List<Position> walls = maze.findCellsWithValue('w');
+            List<Position> walls = maze.findCellsWithValue(Maze.WALL);
             assertFalse(walls.isEmpty());
         }
     }
@@ -484,21 +485,21 @@ class MazeBuilderTest {
             assertEquals(20, maze.getWidth());
 
             // Verify start position
-            List<Position> startPositions = maze.findCellsWithValue('s');
+            List<Position> startPositions = maze.findCellsWithValue(Maze.START);
             assertEquals(1, startPositions.size());
             assertEquals(new Position(1, 1), startPositions.get(0));
 
             // Verify end position
-            List<Position> endPositions = maze.findCellsWithValue('e');
+            List<Position> endPositions = maze.findCellsWithValue(Maze.END);
             assertEquals(1, endPositions.size());
             assertEquals(new Position(18, 18), endPositions.get(0));
 
             // Verify that we have walls
-            List<Position> walls = maze.findCellsWithValue('w');
+            List<Position> walls = maze.findCellsWithValue(Maze.WALL);
             assertFalse(walls.isEmpty());
 
             // Verify that the path is empty (withEmptyPath was called)
-            List<Position> paths = maze.findCellsWithValue('p');
+            List<Position> paths = maze.findCellsWithValue(Maze.PATH);
             assertTrue(paths.isEmpty());
         }
 
@@ -519,21 +520,21 @@ class MazeBuilderTest {
             assertEquals(15, maze.getWidth());
 
             // Verify that we have exactly one start position
-            List<Position> startPositions = maze.findCellsWithValue('s');
+            List<Position> startPositions = maze.findCellsWithValue(Maze.START);
             assertEquals(1, startPositions.size());
 
             // Verify that we have exactly one end position
-            List<Position> endPositions = maze.findCellsWithValue('e');
+            List<Position> endPositions = maze.findCellsWithValue(Maze.END);
             assertEquals(1, endPositions.size());
 
             // Verify that start and end are different positions
-            assertNotEquals(startPositions.get(0), endPositions.get(0));
+            assertNotEquals(startPositions.getFirst(), endPositions.getFirst());
 
             // Verify that we have walls and a path
-            List<Position> walls = maze.findCellsWithValue('w');
+            List<Position> walls = maze.findCellsWithValue(Maze.WALL);
             assertFalse(walls.isEmpty());
 
-            List<Position> paths = maze.findCellsWithValue('p');
+            List<Position> paths = maze.findCellsWithValue(Maze.PATH);
             assertFalse(paths.isEmpty());
         }
 
@@ -556,26 +557,26 @@ class MazeBuilderTest {
 
             // Find special cells (start, end, path)
             List<Position> specialCells = new java.util.ArrayList<>();
-            specialCells.addAll(maze.findCellsWithValue('s')); // Start
-            specialCells.addAll(maze.findCellsWithValue('e')); // End
-            specialCells.addAll(maze.findCellsWithValue('p')); // Path
+            specialCells.addAll(maze.findCellsWithValue(Maze.START)); // Start
+            specialCells.addAll(maze.findCellsWithValue(Maze.END)); // End
+            specialCells.addAll(maze.findCellsWithValue(Maze.PATH)); // Path
 
             // Check perimeter walls
             for (int row = 0; row < 5; row++) {
                 if (!specialCells.contains(new Position(row, 0))) {
-                    assertEquals('w', maze.getCell(row, 0), "Left wall missing at row " + row);
+                    assertEquals(Maze.WALL, maze.getCell(row, 0), "Left wall missing at row " + row);
                 }
                 if (!specialCells.contains(new Position(row, 7))) {
-                    assertEquals('w', maze.getCell(row, 7), "Right wall missing at row " + row);
+                    assertEquals(Maze.WALL, maze.getCell(row, 7), "Right wall missing at row " + row);
                 }
             }
 
             for (int col = 0; col < 8; col++) {
                 if (!specialCells.contains(new Position(0, col))) {
-                    assertEquals('w', maze.getCell(0, col), "Top wall missing at column " + col);
+                    assertEquals(Maze.WALL, maze.getCell(0, col), "Top wall missing at column " + col);
                 }
                 if (!specialCells.contains(new Position(4, col))) {
-                    assertEquals('w', maze.getCell(4, col), "Bottom wall missing at column " + col);
+                    assertEquals(Maze.WALL, maze.getCell(4, col), "Bottom wall missing at column " + col);
                 }
             }
         }

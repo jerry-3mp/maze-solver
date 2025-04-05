@@ -18,11 +18,11 @@ public class Maze {
     private final char[][] grid;
 
     // Valid cell values
-    private static final char START = 's';
-    private static final char END = 'e';
-    private static final char PATH = 'p';
-    private static final char WALL = 'w';
-    private static final char EMPTY = ' ';
+    public static final char START = 's';
+    public static final char END = 'e';
+    public static final char PATH = 'p';
+    public static final char WALL = 'w';
+    public static final char EMPTY = ' ';
 
     private static final char[] VALID_CELL_VALUES = {START, END, PATH, WALL, EMPTY};
 
