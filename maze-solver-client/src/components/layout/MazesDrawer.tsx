@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Drawer,
@@ -15,17 +15,17 @@ import {
   Toolbar
 } from '@mui/material';
 import MazeItem from '../maze/MazeItem';
-import { useMazes } from '../../hooks/useMazes';
+import { useMazeContext } from '../../context/MazeContext';
 
 interface DrawerProps {
   open: boolean;
   toggleDrawer: (open: boolean) => void;
-  onMazeSelect?: (mazeId: number) => void;
 }
 
-const MazesDrawer: React.FC<DrawerProps> = ({ open, toggleDrawer, onMazeSelect }) => {
-  const [selectedMazeId, setSelectedMazeId] = useState<number | null>(null);
-  
+const MazesDrawer: React.FC<DrawerProps> = ({ 
+  open, 
+  toggleDrawer
+}) => {
   const {
     mazes,
     loading,
@@ -34,23 +34,23 @@ const MazesDrawer: React.FC<DrawerProps> = ({ open, toggleDrawer, onMazeSelect }
     currentPage,
     pageSize,
     setPage,
-    setPageSize
-  } = useMazes(0, 5); // Start with 5 items per page
+    setPageSize,
+    setCurrentMazeById,
+    currentMaze
+  } = useMazeContext();
 
   const handleMazeClick = (mazeId: number) => {
-    setSelectedMazeId(mazeId);
-    if (onMazeSelect) {
-      onMazeSelect(mazeId);
-    }
+    setCurrentMazeById(mazeId);
     toggleDrawer(false); // Close drawer after selection on mobile
   };
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value - 1); // API is 0-based, but Pagination component is 1-based
+    // API is 0-based, but Pagination component is 1-based
+    setPage(value - 1);
   };
 
-  const handlePageSizeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setPageSize(event.target.value as number);
+  const handlePageSizeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPageSize(Number(event.target.value));
   };
 
   const drawerContent = (
@@ -80,7 +80,7 @@ const MazesDrawer: React.FC<DrawerProps> = ({ open, toggleDrawer, onMazeSelect }
               <MazeItem
                 key={maze.id}
                 maze={maze}
-                selected={selectedMazeId === maze.id}
+                selected={currentMaze?.id === maze.id}
                 onClick={handleMazeClick}
               />
             ))}
@@ -95,7 +95,7 @@ const MazesDrawer: React.FC<DrawerProps> = ({ open, toggleDrawer, onMazeSelect }
             <Select
               labelId="page-size-label"
               value={pageSize}
-              onChange={()=>handlePageSizeChange}
+              onChange={handlePageSizeChange}
               label="Per Page"
             >
               <MenuItem value={5}>5</MenuItem>
@@ -110,7 +110,7 @@ const MazesDrawer: React.FC<DrawerProps> = ({ open, toggleDrawer, onMazeSelect }
         </Box>
 
         <Pagination
-          count={totalPages}
+          count={Math.max(1, totalPages)}
           page={currentPage + 1}
           onChange={handlePageChange}
           color="primary"

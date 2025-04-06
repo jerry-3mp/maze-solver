@@ -11,20 +11,16 @@ import {
   CircularProgress,
   Alert
 } from '@mui/material';
-import { useMazeGeneration } from '../../hooks/useMazeGeneration';
+import { useMazeContext } from '../../context/MazeContext';
 
 interface MazeGenerationDialogProps {
   open: boolean;
   onClose: () => void;
-  onMazeGenerated: (mazeId: number) => void;
-  refreshMazes: () => void;
 }
 
 const MazeGenerationDialog: React.FC<MazeGenerationDialogProps> = ({
   open,
-  onClose,
-  onMazeGenerated,
-  refreshMazes
+  onClose
 }) => {
   // Form state
   const [width, setWidth] = useState<number>(10);
@@ -32,12 +28,11 @@ const MazeGenerationDialog: React.FC<MazeGenerationDialogProps> = ({
   const [widthError, setWidthError] = useState<string>('');
   const [heightError, setHeightError] = useState<string>('');
 
-  // Use the maze generation hook and pass the refresh callback
   const { 
-    generating, 
+    loading: generating, 
     error, 
     generateMaze 
-  } = useMazeGeneration(refreshMazes);
+  } = useMazeContext();
 
   const validateInputs = (): boolean => {
     let isValid = true;
@@ -68,12 +63,8 @@ const MazeGenerationDialog: React.FC<MazeGenerationDialogProps> = ({
       return;
     }
 
-    const generatedMaze = await generateMaze(width, height);
-    
-    if (generatedMaze && generatedMaze.id) {
-      onMazeGenerated(generatedMaze.id);
-      onClose();
-    }
+    await generateMaze(width, height);
+    onClose();
   };
 
   const handleClose = () => {

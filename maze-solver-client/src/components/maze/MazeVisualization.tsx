@@ -8,26 +8,19 @@ import {
   Button,
   Grid, Chip
 } from '@mui/material';
-import { MazeResponseDTO } from '../../api/api';
+import { useMazeContext } from '../../context/MazeContext';
 
 interface MazeVisualizationProps {
-  maze: MazeResponseDTO | null;
-  loading: boolean;
-  error: string | null;
-  onSolveMaze?: (mazeId: number) => void;
   onGenerateMaze?: () => void;
 }
 
 const MazeVisualization: React.FC<MazeVisualizationProps> = ({
-  maze,
-  loading,
-  error,
-  onSolveMaze,
   onGenerateMaze
 }) => {
+  const { currentMaze: maze, loading, error, solveMaze } = useMazeContext();
   const handleSolveClick = () => {
-    if (maze && maze.id && onSolveMaze) {
-      onSolveMaze(maze.id);
+    if (maze && maze.id) {
+      solveMaze(maze.id);
     }
   };
 
