@@ -6,7 +6,8 @@ import {
   CircularProgress,
   Alert,
   Button,
-  Grid, Chip
+  Grid,
+  Chip
 } from '@mui/material';
 import { useMazeContext } from '../../context/MazeContext';
 
@@ -106,7 +107,7 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
   return (
     <Box sx={{ p: 3, maxWidth: '100%', overflow: 'auto' }}>
       <Grid container spacing={2}>
-        <Grid item size={12}>
+        <Grid size={12}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Typography variant="h5">
               Maze #{maze.id}
@@ -132,7 +133,7 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
           </Box>
         </Grid>
         
-        <Grid item size={12}>
+        <Grid size={12}>
           <Paper elevation={1} sx={{ p: 2, mt: 2, mb: 2 }}>
             <Typography variant="subtitle1" sx={{ mb: 1 }}>
               Legend
@@ -169,7 +170,7 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
           </Paper>
         </Grid>
         
-        <Grid item size={12}>
+        <Grid size={12}>
           <Paper elevation={3} sx={{ p: 2, overflow: 'auto' }}>
             <Box sx={{ 
               display: 'grid',
@@ -242,7 +243,7 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
           </Paper>
         </Grid>
         
-        <Grid item size={12}>
+        <Grid size={12}>
           <Box sx={{ mt: 2 }}>
             <Typography variant="body2" color="text.secondary" component="div">
               <strong>Status:</strong>

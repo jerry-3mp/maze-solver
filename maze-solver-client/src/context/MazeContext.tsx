@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { ApiFactory } from '../api/apiFactory';
-import { MazeResponseDTO, MazeSummaryDTO, MazeSummaryListResponse } from '../api/api';
+import { MazeResponseDTO, MazeSummaryDTO, MazeSummaryListResponse } from '../api';
 
 interface MazeContextType {
   // Selected maze
@@ -55,7 +55,6 @@ export const MazeProvider: React.FC<MazeProviderProps> = ({
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasInitialized, setHasInitialized] = useState(false);
@@ -87,7 +86,6 @@ export const MazeProvider: React.FC<MazeProviderProps> = ({
       
       setMazes(data.content || []);
       setTotalPages(data.totalPages || 0);
-      setTotalElements(data.totalElements || 0);
       
       // Ensure we're not on a page beyond the total pages
       if (data.totalPages && currentPage >= data.totalPages && data.totalPages > 0) {

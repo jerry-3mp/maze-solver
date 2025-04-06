@@ -95,7 +95,7 @@ const MazesDrawer: React.FC<DrawerProps> = ({
             <Select
               labelId="page-size-label"
               value={pageSize}
-              onChange={handlePageSizeChange}
+              onChange={()=>handlePageSizeChange}
               label="Per Page"
             >
               <MenuItem value={5}>5</MenuItem>
