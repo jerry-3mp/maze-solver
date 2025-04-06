@@ -1,0 +1,57 @@
+name: Build and Deploy maze-solver-client to S3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/s3-deploy.yml'
+      # Explicitly exclude documentation changes
+      - '!maze-solver-server/**'
+      - '!**/*.md'
+      - '!**/*.txt'
+      - '!**/*.puml'
+      - '!**/LICENSE'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+
+      - name: Install yarn
+        run: npm install -g corepack && yarn set version stable
+
+      - name: Install dependencies
+        working-directory: ./maze-solver-client
+        run: yarn install
+
+      - name: Build maze-solver-client
+        working-directory: ./maze-solver-client
+        run: yarn build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to S3
+        working-directory: ./maze-solver-client
+        run: aws s3 sync dist s3://maze-solver-client --delete

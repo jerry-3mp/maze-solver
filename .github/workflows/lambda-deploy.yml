@@ -12,6 +12,7 @@ on:
       - 'maze-solver-server/template.yaml'
       - '.github/workflows/lambda-deploy.yml'
       # Explicitly exclude documentation changes
+      - '!maze-solver-client/**'
       - '!**/*.md'
       - '!**/*.txt'
       - '!**/*.puml'
