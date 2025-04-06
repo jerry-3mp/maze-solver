@@ -32,10 +32,10 @@ class MazeResponseDTOTest {
         // Then
         assertNotNull(dto);
         assertEquals(1, dto.getId());
-        assertEquals(3, dto.getGrid().length);
-        assertEquals(3, dto.getGrid()[0].length);
-        assertEquals('s', dto.getGrid()[0][0]);
-        assertEquals('e', dto.getGrid()[2][2]);
+        assertEquals(3, dto.getGrid().size());
+        assertEquals(3, dto.getGrid().get(0).length());
+        assertEquals('s', dto.getGrid().get(0).charAt(0));
+        assertEquals('e', dto.getGrid().get(2).charAt(2));
         assertFalse(dto.isSolved());
         assertNull(dto.getSolvedPath());
     }

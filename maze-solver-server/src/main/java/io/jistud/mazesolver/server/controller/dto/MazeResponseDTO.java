@@ -16,8 +16,10 @@ public class MazeResponseDTO {
     @Schema(description = "Unique identifier for the maze")
     private final Integer id;
 
-    @Schema(description = "2D grid representation of the maze. 'S'=start, 'E'=end, 'w'=wall, 'p'=path, ' '=empty")
-    private final char[][] grid;
+    @Schema(
+            description =
+                    "Grid representation of the maze as a list of strings. 's'=start, 'e'=end, 'w'=wall, 'p'=path, ' '=empty")
+    private final List<String> grid;
 
     @Schema(description = "Whether the maze has been solved")
     private final boolean solved;
@@ -25,7 +27,7 @@ public class MazeResponseDTO {
     @Schema(description = "Sequence of positions forming the solution path (null if not solved)")
     private final List<PositionDTO> solvedPath;
 
-    public MazeResponseDTO(Integer id, char[][] grid, boolean solved, List<PositionDTO> solvedPath) {
+    public MazeResponseDTO(Integer id, List<String> grid, boolean solved, List<PositionDTO> solvedPath) {
         this.id = id;
         this.grid = grid;
         this.solved = solved;
@@ -48,14 +50,22 @@ public class MazeResponseDTO {
             }
         }
 
-        return new MazeResponseDTO(id, maze.getGrid(), maze.isSolved(), solvedPath);
+        // Convert char[][] grid to List<String>
+        char[][] gridArray = maze.getGrid();
+        List<String> gridList = new ArrayList<>();
+
+        for (char[] row : gridArray) {
+            gridList.add(new String(row));
+        }
+
+        return new MazeResponseDTO(id, gridList, maze.isSolved(), solvedPath);
     }
 
     public Integer getId() {
         return id;
     }
 
-    public char[][] getGrid() {
+    public List<String> getGrid() {
         return grid;
     }
 
