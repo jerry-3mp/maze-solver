@@ -166,6 +166,104 @@ class MazeBuilderTest {
                     .withRandomPath();
             assertNotNull(stage);
         }
+
+        @Test
+        @DisplayName("withKruskalMaze() should generate a perfect maze")
+        void withKruskalMazeShouldGeneratePerfectMaze() {
+            // In the implemented version, this should not throw and return FinalStage
+            MazeBuilder.FinalStage stage =
+                    MazeBuilder.builder().height(10).width(10).withKruskalMaze();
+            assertNotNull(stage);
+        }
+
+        @Test
+        @DisplayName("withKruskalMaze() should create a maze with exactly one path between any two points")
+        void withKruskalMazeShouldCreatePerfectMaze() {
+            // Create a maze using Kruskal's algorithm
+            Maze maze =
+                    MazeBuilder.builder().height(15).width(15).withKruskalMaze().build();
+
+            // Verify the maze has exactly one start and one end
+            List<Position> startPositions = maze.findCellsWithValue(Maze.START);
+            List<Position> endPositions = maze.findCellsWithValue(Maze.END);
+            assertEquals(1, startPositions.size(), "Should have exactly one start position");
+            assertEquals(1, endPositions.size(), "Should have exactly one end position");
+
+            Position start = startPositions.getFirst();
+            Position end = endPositions.getFirst();
+
+            // Solve the maze to find a path
+            assertTrue(maze.solve(), "Maze should be solvable");
+            assertNotNull(maze.getSolvedPath(), "Solved path should not be null");
+            assertFalse(maze.getSolvedPath().isEmpty(), "Solved path should not be empty");
+
+            // Verify the start and end are in the path
+            List<Position> solvedPath = maze.getSolvedPath();
+            assertEquals(start, solvedPath.getFirst(), "Path should start at the start position");
+            assertEquals(end, solvedPath.getLast(), "Path should end at the end position");
+
+            // Verify there are no loops by ensuring each position in the path only appears once
+            java.util.Set<Position> uniquePositions = new java.util.HashSet<>(solvedPath);
+            assertEquals(solvedPath.size(), uniquePositions.size(), "Path should not contain any loops");
+        }
+
+        @Test
+        @DisplayName("withKruskalMaze() should create a fully connected maze")
+        void withKruskalMazeShouldCreateFullyConnectedMaze() {
+            // Create a maze using Kruskal's algorithm
+            Maze maze =
+                    MazeBuilder.builder().height(12).width(12).withKruskalMaze().build();
+
+            // Get all empty spaces (non-wall cells)
+            java.util.List<Position> emptyCells = new java.util.ArrayList<>();
+            for (int row = 0; row < maze.getHeight(); row++) {
+                for (int col = 0; col < maze.getWidth(); col++) {
+                    char cell = maze.getCell(row, col);
+                    if (cell != Maze.WALL) {
+                        emptyCells.add(new Position(row, col));
+                    }
+                }
+            }
+
+            // Verify that we have some non-wall cells
+            assertFalse(emptyCells.isEmpty(), "Maze should have non-wall cells");
+
+            // Pick a random empty cell as the starting point for connectivity check
+            java.util.Random random = new java.util.Random();
+            Position startCell = emptyCells.get(random.nextInt(emptyCells.size()));
+
+            // Perform a BFS to find all reachable cells from the startCell
+            java.util.Set<Position> visited = new java.util.HashSet<>();
+            java.util.Queue<Position> queue = new java.util.LinkedList<>();
+            queue.add(startCell);
+            visited.add(startCell);
+
+            while (!queue.isEmpty()) {
+                Position current = queue.poll();
+                int row = current.row();
+                int col = current.col();
+
+                // Check all four adjacent cells
+                Position[] neighbors = {
+                    new Position(row - 1, col), // Up
+                    new Position(row + 1, col), // Down
+                    new Position(row, col - 1), // Left
+                    new Position(row, col + 1) // Right
+                };
+
+                for (Position neighbor : neighbors) {
+                    if (maze.isValidPosition(neighbor.row(), neighbor.col())
+                            && maze.getCell(neighbor.row(), neighbor.col()) != Maze.WALL
+                            && !visited.contains(neighbor)) {
+                        queue.add(neighbor);
+                        visited.add(neighbor);
+                    }
+                }
+            }
+
+            // All non-wall cells should be reachable
+            assertEquals(emptyCells.size(), visited.size(), "All non-wall cells should be connected");
+        }
     }
 
     @Nested

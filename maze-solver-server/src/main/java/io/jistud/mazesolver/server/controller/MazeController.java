@@ -50,12 +50,47 @@ public class MazeController {
             @Parameter(description = "Maze generation parameters") @RequestBody MazeGenerationRequestDTO request) {
 
         // Validate dimensions
-        if (request.getWidth() < 5 || request.getHeight() < 5) {
+        if (request.getWidth() < 5 || request.getHeight() < 5 || request.getWidth() > 30 || request.getHeight() > 30) {
             return ResponseEntity.badRequest().build();
         }
 
         // Generate the maze
         Maze generatedMaze = mazeService.generateRandomMaze(request.getWidth(), request.getHeight());
+
+        // Save the maze to database and get entity with ID
+        MazeEntity savedEntity = mazeService.saveEntityFromMaze(generatedMaze);
+
+        // Get the ID of the saved maze
+        Integer mazeId = savedEntity.getId();
+
+        // Create the response DTO
+        MazeResponseDTO response = MazeResponseDTO.fromMaze(mazeId, generatedMaze);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/perfect")
+    @Operation(
+            summary = "Generate a random perfect maze",
+            description = "Creates a new random perfect maze with the specified dimensions")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Successfully generated maze",
+                            content = @Content(schema = @Schema(implementation = MazeResponseDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "Invalid dimensions provided")
+            })
+    public ResponseEntity<MazeResponseDTO> generateRandomPerfectMaze(
+            @Parameter(description = "Maze generation parameters") @RequestBody MazeGenerationRequestDTO request) {
+
+        // Validate dimensions
+        if (request.getWidth() < 5 || request.getHeight() < 5 || request.getWidth() > 30 || request.getHeight() > 30) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // Generate the maze
+        Maze generatedMaze = mazeService.generateRandomPerfectMaze(request.getWidth(), request.getHeight());
 
         // Save the maze to database and get entity with ID
         MazeEntity savedEntity = mazeService.saveEntityFromMaze(generatedMaze);

@@ -23,6 +23,15 @@ public interface MazeService {
     Maze generateRandomMaze(int width, int height);
 
     /**
+     * Generate a random perfect maze with the specified dimensions
+     *
+     * @param width the width of the maze
+     * @param height the height of the maze
+     * @return the generated maze
+     */
+     Maze generateRandomPerfectMaze(int width, int height);
+
+    /**
      * Converts a maze model to a maze entity and saves it to the database
      *
      * @param maze the maze model to save

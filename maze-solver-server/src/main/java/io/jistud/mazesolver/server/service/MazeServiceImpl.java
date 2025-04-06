@@ -41,6 +41,18 @@ public class MazeServiceImpl implements MazeService {
     }
 
     @Override
+    public Maze generateRandomPerfectMaze(int width, int height) {
+        // Use the existing MazeBuilder to generate a random maze
+        Maze maze = MazeBuilder.builder()
+                .height(height)
+                .width(width)
+                .withKruskalMaze()
+                .build();
+
+        return maze;
+    }
+
+    @Override
     public MazeEntity saveEntityFromMaze(Maze maze) {
         // Convert the maze to entity and save it to the database
         MazeEntity entity = convertToEntity(maze);

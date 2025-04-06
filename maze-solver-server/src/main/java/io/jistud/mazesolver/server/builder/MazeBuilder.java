@@ -78,6 +78,15 @@ public class MazeBuilder {
          * @return the PathStage for configuring the maze path
          */
         PathStage randomStartAndEnd();
+
+        /**
+         * Generates a perfect maze using randomized Kruskal's algorithm and transitions directly to the final stage.
+         * Creates a maze where there is exactly one path between any two points, including start and end positions.
+         * All cells in the maze will be connected, and there will be no loops or cycles.
+         *
+         * @return the FinalStage for completing the maze build
+         */
+        FinalStage withKruskalMaze();
     }
 
     /**
@@ -145,6 +154,72 @@ public class MazeBuilder {
      * Internal implementation of the builder with stage transitions.
      */
     private static class BuilderImpl implements DimensionStage, PositionStage, PathStage, WallStage, FinalStage {
+        // Kruskal's algorithm needs a way to represent sets of connected cells
+        private static class DisjointSet {
+            private final java.util.Map<Position, Position> parent = new java.util.HashMap<>();
+            private final java.util.Map<Position, Integer> rank = new java.util.HashMap<>();
+
+            /**
+             * Makes a new set with the given position as its only member.
+             *
+             * @param position the position to make a set for
+             */
+            public void makeSet(Position position) {
+                parent.put(position, position);
+                rank.put(position, 0);
+            }
+
+            /**
+             * Finds the representative of the set containing the given position.
+             * Uses path compression for efficiency.
+             *
+             * @param position the position to find the representative for
+             * @return the representative of the set containing the position
+             */
+            public Position find(Position position) {
+                if (!parent.get(position).equals(position)) {
+                    parent.put(position, find(parent.get(position)));
+                }
+                return parent.get(position);
+            }
+
+            /**
+             * Merges the sets containing the given positions.
+             * Uses union by rank for efficiency.
+             *
+             * @param x the first position
+             * @param y the second position
+             */
+            public void union(Position x, Position y) {
+                Position rootX = find(x);
+                Position rootY = find(y);
+
+                if (rootX.equals(rootY)) {
+                    return;
+                }
+
+                if (rank.get(rootX) < rank.get(rootY)) {
+                    parent.put(rootX, rootY);
+                } else if (rank.get(rootX) > rank.get(rootY)) {
+                    parent.put(rootY, rootX);
+                } else {
+                    parent.put(rootY, rootX);
+                    rank.put(rootX, rank.get(rootX) + 1);
+                }
+            }
+
+            /**
+             * Checks if the given positions are in the same set.
+             *
+             * @param x the first position
+             * @param y the second position
+             * @return true if the positions are in the same set, false otherwise
+             */
+            public boolean connected(Position x, Position y) {
+                return find(x).equals(find(y));
+            }
+        }
+
         private int height;
         private int width;
         private Position startPosition;
@@ -245,6 +320,164 @@ public class MazeBuilder {
             generateRandomPath();
 
             return this;
+        }
+
+        @Override
+        public FinalStage withKruskalMaze() {
+            // Initialize grid if not already initialized
+            if (grid == null) {
+                initializeGrid();
+            }
+
+            // Start with all walls (fill the grid with walls)
+            for (int row = 0; row < height; row++) {
+                for (int col = 0; col < width; col++) {
+                    grid[row][col] = Maze.WALL;
+                }
+            }
+
+            // List of all possible walls between adjacent cells
+            java.util.List<Wall> walls = new java.util.ArrayList<>();
+
+            // Generate the list of walls
+            for (int row = 1; row < height - 1; row += 2) {
+                for (int col = 1; col < width - 1; col += 2) {
+                    // Create a cell at this position
+                    Position cell = new Position(row, col);
+                    grid[row][col] = Maze.EMPTY;
+
+                    // Add walls to the right (if not at the edge)
+                    if (col + 2 < width - 1) {
+                        walls.add(new Wall(cell, new Position(row, col + 2), new Position(row, col + 1)));
+                    }
+
+                    // Add walls below (if not at the edge)
+                    if (row + 2 < height - 1) {
+                        walls.add(new Wall(cell, new Position(row + 2, col), new Position(row + 1, col)));
+                    }
+                }
+            }
+
+            // Shuffle the walls to randomize the maze
+            java.util.Collections.shuffle(walls);
+
+            // Initialize the disjoint set data structure
+            DisjointSet disjointSet = new DisjointSet();
+
+            // Initialize sets for each cell
+            for (int row = 1; row < height - 1; row += 2) {
+                for (int col = 1; col < width - 1; col += 2) {
+                    disjointSet.makeSet(new Position(row, col));
+                }
+            }
+
+            // Process each wall
+            for (Wall wall : walls) {
+                Position cell1 = wall.cell1();
+                Position cell2 = wall.cell2();
+
+                // If the cells are not already connected, remove the wall between them
+                if (!disjointSet.connected(cell1, cell2)) {
+                    // Remove the wall (set the wall cell to empty)
+                    grid[wall.wallPosition().row()][wall.wallPosition().col()] = Maze.EMPTY;
+
+                    // Union the sets containing the two cells
+                    disjointSet.union(cell1, cell2);
+                }
+            }
+
+            // Find appropriate locations for start and end within the maze
+            // We want to place them on opposite sides if possible
+            placeStartAndEndInMaze();
+
+            return this;
+        }
+
+        /**
+         * Represents a wall between two cells in the maze.
+         * Contains references to the two cells and the position of the wall between them.
+         */
+        private record Wall(Position cell1, Position cell2, Position wallPosition) {}
+
+        /**
+         * Places the start and end positions within the maze at appropriate locations.
+         * If the positions are already set, ensures they are placed within the maze pathways.
+         */
+        private void placeStartAndEndInMaze() {
+            // Get list of empty cells (potential positions for start/end)
+            java.util.List<Position> emptyCells = new java.util.ArrayList<>();
+            for (int row = 0; row < height; row++) {
+                for (int col = 0; col < width; col++) {
+                    if (grid[row][col] == Maze.EMPTY) {
+                        emptyCells.add(new Position(row, col));
+                    }
+                }
+            }
+
+            if (emptyCells.isEmpty()) {
+                throw new IllegalStateException("No empty cells available for start/end positions");
+            }
+
+            // Find cells that are far apart (preferably on opposite sides of the maze)
+            java.util.Random random = new java.util.Random();
+
+            // If start and end are already set, use their positions
+            if (startPosition != null && endPosition != null) {
+                // Check if existing positions are walls, and if so, move them to nearby empty cells
+                if (grid[startPosition.row()][startPosition.col()] == Maze.WALL) {
+                    // Find closest empty cell to start
+                    startPosition = findClosestEmptyCell(startPosition, emptyCells);
+                }
+
+                if (grid[endPosition.row()][endPosition.col()] == Maze.WALL) {
+                    // Find closest empty cell to end
+                    endPosition = findClosestEmptyCell(endPosition, emptyCells);
+                }
+            } else {
+                // No positions set, choose random ones that are far apart
+                // We'll try to select points on opposite sides of the maze
+
+                // Get some cells near the borders
+                java.util.List<Position> borderCells = emptyCells.stream()
+                        .filter(p -> p.row() <= 2 || p.row() >= height - 3 || p.col() <= 2 || p.col() >= width - 3)
+                        .toList();
+
+                if (!borderCells.isEmpty()) {
+                    // Choose a random cell near the border
+                    startPosition = borderCells.get(random.nextInt(borderCells.size()));
+
+                    // Find a cell on the opposite side
+                    int oppositeRow = height - 1 - startPosition.row();
+                    int oppositeCol = width - 1 - startPosition.col();
+
+                    // Find the cell furthest from the start
+                    Position oppositeCorner = new Position(oppositeRow, oppositeCol);
+                    endPosition = findClosestEmptyCell(oppositeCorner, emptyCells);
+                } else {
+                    // Just choose random positions if no border cells
+                    startPosition = emptyCells.get(random.nextInt(emptyCells.size()));
+                    emptyCells.remove(startPosition);
+                    endPosition = emptyCells.get(random.nextInt(emptyCells.size()));
+                }
+            }
+
+            // Set start and end markers in the grid
+            grid[startPosition.row()][startPosition.col()] = Maze.START;
+            grid[endPosition.row()][endPosition.col()] = Maze.END;
+        }
+
+        /**
+         * Finds the closest empty cell to the given target position.
+         *
+         * @param target the target position
+         * @param emptyCells the list of empty cells to search
+         * @return the closest empty cell to the target position
+         */
+        private Position findClosestEmptyCell(Position target, java.util.List<Position> emptyCells) {
+            return emptyCells.stream()
+                    .min(java.util.Comparator.comparingInt(
+                            p -> Math.abs(p.row() - target.row()) + Math.abs(p.col() - target.col())))
+                    .orElse(emptyCells.get(0)); // Fallback to first empty cell if comparison fails
         }
 
         /**
