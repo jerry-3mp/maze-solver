@@ -42,6 +42,7 @@ const MazesDrawer: React.FC<DrawerProps> = ({ open, toggleDrawer, onMazeSelect }
     if (onMazeSelect) {
       onMazeSelect(mazeId);
     }
+    toggleDrawer(false); // Close drawer after selection on mobile
   };
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
@@ -94,7 +95,7 @@ const MazesDrawer: React.FC<DrawerProps> = ({ open, toggleDrawer, onMazeSelect }
             <Select
               labelId="page-size-label"
               value={pageSize}
-              onChange={handlePageSizeChange}
+              onChange={()=>handlePageSizeChange}
               label="Per Page"
             >
               <MenuItem value={5}>5</MenuItem>

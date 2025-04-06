@@ -243,14 +243,28 @@ Brief overview of what implementation changes will be made and why.
 │   │   ├── App.tsx
 │   │   ├── api
 │   │   │   ├── api.ts
+│   │   │   ├── apiFactory.ts
 │   │   │   ├── base.ts
 │   │   │   ├── common.ts
 │   │   │   ├── configuration.ts
+│   │   │   ├── git_push.sh
 │   │   │   └── index.ts
 │   │   ├── assets
 │   │   │   └── react.svg
 │   │   ├── components
-│   │   │   └── layout
+│   │   │   ├── layout
+│   │   │   │   ├── ButtonAppBar.tsx
+│   │   │   │   └── MazesDrawer.tsx
+│   │   │   ├── maze
+│   │   │   │   ├── MazeItem.tsx
+│   │   │   │   └── MazeVisualization.tsx
+│   │   │   └── status
+│   │   │       └── StatusComponent.tsx
+│   │   ├── config
+│   │   │   └── apiConfig.ts
+│   │   ├── hooks
+│   │   │   ├── useMazeDetails.ts
+│   │   │   └── useMazes.ts
 │   │   ├── index.css
 │   │   ├── main.tsx
 │   │   └── vite-env.d.ts

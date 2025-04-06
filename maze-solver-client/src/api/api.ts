@@ -55,11 +55,11 @@ export interface MazeResponseDTO {
      */
     'id'?: number;
     /**
-     * 2D grid representation of the maze. \'S\'=start, \'E\'=end, \'w\'=wall, \'p\'=path, \' \'=empty
-     * @type {Array<Array<string>>}
+     * Grid representation of the maze as a list of strings. \'s\'=start, \'e\'=end, \'w\'=wall, \'p\'=path, \' \'=empty
+     * @type {Array<string>}
      * @memberof MazeResponseDTO
      */
-    'grid'?: Array<Array<string>>;
+    'grid'?: Array<string>;
     /**
      * Whether the maze has been solved
      * @type {boolean}
