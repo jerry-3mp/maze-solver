@@ -47,16 +47,21 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
     { type: 'Wall', color: '#424242' },
     { type: 'Path', color: '#2196F3' },
     { type: 'Empty', color: '#FFFFFF' },
-    { type: 'Solution', color: '#FF9800' }
+    { type: 'Solution', color: '#FF9800', description: maze?.solved ? 'with numbered steps' : '' }
   ];
+
+  // Check if the current cell is part of the solution path and return its index
+  const getSolutionCellIndex = (row: number, col: number) => {
+    if (!maze?.solvedPath) return -1;
+    
+    return maze.solvedPath.findIndex(pos => 
+      pos.row === row && pos.col === col
+    );
+  };
 
   // Check if the current cell is part of the solution path
   const isSolutionCell = (row: number, col: number) => {
-    if (!maze?.solvedPath) return false;
-    
-    return maze.solvedPath.some(pos => 
-      pos.row === row && pos.col === col
-    );
+    return getSolutionCellIndex(row, col) !== -1;
   };
 
   // Rendering loading state
@@ -132,10 +137,22 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
                       backgroundColor: item.color,
                       border: '1px solid #e0e0e0',
                       mr: 1,
-                      borderRadius: item.type === 'Solution' ? '50%' : '0'
+                      borderRadius: item.type === 'Solution' ? '50%' : '0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}
-                  />
-                  <Typography variant="caption">{item.type}</Typography>
+                  >
+                    {item.type === 'Solution' && maze?.solved && (
+                      <Typography variant="caption" sx={{ fontSize: '8px', color: '#000', fontWeight: 'bold' }}>
+                        1
+                      </Typography>
+                    )}
+                  </Box>
+                  <Typography variant="caption">
+                    {item.type}
+                    {item.description && ` (${item.description})`}
+                  </Typography>
                 </Box>
               ))}
             </Box>
@@ -166,10 +183,13 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        width: '10px',
-                        height: '10px',
+                        width: '15px',
+                        height: '15px',
                         borderRadius: '50%',
                         backgroundColor: '#FF9800',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       } : {}
                     }}
                   >
@@ -186,6 +206,23 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
                         }}
                       >
                         {cell}
+                      </Typography>
+                    )}
+                    {maze.solved && isSolutionCell(rowIndex, colIndex) && !['S', 'E'].includes(cell) && (
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          position: 'absolute', 
+                          top: '50%', 
+                          left: '50%', 
+                          transform: 'translate(-50%, -50%)',
+                          color: '#000',
+                          fontWeight: 'bold',
+                          fontSize: '10px',
+                          zIndex: 2
+                        }}
+                      >
+                        {getSolutionCellIndex(rowIndex, colIndex) + 1}
                       </Typography>
                     )}
                   </Box>
