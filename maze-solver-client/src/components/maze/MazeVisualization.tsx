@@ -15,17 +15,25 @@ interface MazeVisualizationProps {
   loading: boolean;
   error: string | null;
   onSolveMaze?: (mazeId: number) => void;
+  onGenerateMaze?: () => void;
 }
 
 const MazeVisualization: React.FC<MazeVisualizationProps> = ({
   maze,
   loading,
   error,
-  onSolveMaze
+  onSolveMaze,
+  onGenerateMaze
 }) => {
   const handleSolveClick = () => {
     if (maze && maze.id && onSolveMaze) {
       onSolveMaze(maze.id);
+    }
+  };
+
+  const handleGenerateClick = () => {
+    if (onGenerateMaze) {
+      onGenerateMaze();
     }
   };
 
@@ -110,15 +118,24 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
             <Typography variant="h5">
               Maze #{maze.id}
             </Typography>
-            {!maze.solved && (
-              <Button 
-                variant="contained" 
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              {!maze.solved && (
+                <Button 
+                  variant="contained" 
+                  color="primary"
+                  onClick={handleSolveClick}
+                >
+                  Solve Maze
+                </Button>
+              )}
+              <Button
+                variant="outlined"
                 color="primary"
-                onClick={handleSolveClick}
+                onClick={handleGenerateClick}
               >
-                Solve Maze
+                Generate Maze
               </Button>
-            )}
+            </Box>
           </Box>
         </Grid>
         

@@ -1,9 +1,10 @@
 import './App.css'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Box, CssBaseline, Toolbar } from '@mui/material';
 import ButtonAppBar from "./components/layout/ButtonAppBar.tsx";
 import MazesDrawer from "./components/layout/MazesDrawer.tsx";
 import MazeVisualization from './components/maze/MazeVisualization.tsx';
+import MazeGenerationDialog from './components/maze/MazeGenerationDialog.tsx';
 import { useMazes } from './hooks/useMazes.ts';
 import { useMazeDetails } from './hooks/useMazeDetails.ts';
 import { ApiFactory } from './api/apiFactory.ts';
@@ -11,9 +12,10 @@ import { ApiFactory } from './api/apiFactory.ts';
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedMazeId, setSelectedMazeId] = useState<number | null>(null);
+  const [generationDialogOpen, setGenerationDialogOpen] = useState(false);
   
   // Get the list of mazes for the drawer
-  const { mazes, loading: mazesLoading } = useMazes(0, 5);
+  const { mazes, loading: mazesLoading, refresh: refreshMazes } = useMazes(0, 5);
   
   // Get the details of the selected maze
   const { 
@@ -26,6 +28,19 @@ function App() {
   const toggleDrawer = () => {
     setDrawerOpen((prevState) => !prevState);
   };
+
+  const handleOpenGenerationDialog = () => {
+    setGenerationDialogOpen(true);
+  };
+
+  const handleCloseGenerationDialog = () => {
+    setGenerationDialogOpen(false);
+  };
+
+  const handleMazeGenerated = useCallback((mazeId: number) => {
+    setSelectedMazeId(mazeId);
+    fetchMaze(mazeId);
+  }, [fetchMaze]);
 
   const handleMazeSelect = (mazeId: number) => {
     setSelectedMazeId(mazeId);
@@ -83,6 +98,13 @@ function App() {
           loading={mazeDetailsLoading}
           error={mazeDetailsError}
           onSolveMaze={handleSolveMaze}
+          onGenerateMaze={handleOpenGenerationDialog}
+        />
+        <MazeGenerationDialog 
+          open={generationDialogOpen}
+          onClose={handleCloseGenerationDialog}
+          onMazeGenerated={handleMazeGenerated}
+          refreshMazes={refreshMazes}
         />
       </Box>
     </Box>
