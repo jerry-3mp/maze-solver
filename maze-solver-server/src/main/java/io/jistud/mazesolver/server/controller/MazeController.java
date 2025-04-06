@@ -75,11 +75,11 @@ public class MazeController {
             description = "Creates a new random perfect maze with the specified dimensions")
     @ApiResponses(
             value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Successfully generated maze",
-                            content = @Content(schema = @Schema(implementation = MazeResponseDTO.class))),
-                    @ApiResponse(responseCode = "400", description = "Invalid dimensions provided")
+                @ApiResponse(
+                        responseCode = "200",
+                        description = "Successfully generated maze",
+                        content = @Content(schema = @Schema(implementation = MazeResponseDTO.class))),
+                @ApiResponse(responseCode = "400", description = "Invalid dimensions provided")
             })
     public ResponseEntity<MazeResponseDTO> generateRandomPerfectMaze(
             @Parameter(description = "Maze generation parameters") @RequestBody MazeGenerationRequestDTO request) {

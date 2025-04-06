@@ -29,7 +29,7 @@ public interface MazeService {
      * @param height the height of the maze
      * @return the generated maze
      */
-     Maze generateRandomPerfectMaze(int width, int height);
+    Maze generateRandomPerfectMaze(int width, int height);
 
     /**
      * Converts a maze model to a maze entity and saves it to the database
