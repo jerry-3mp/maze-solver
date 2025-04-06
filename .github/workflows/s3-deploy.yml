@@ -5,6 +5,18 @@ on:
     branches:
       - main
     paths:
+      # Frontend specific files
+      - 'maze-solver-client/src/**/*.tsx'
+      - 'maze-solver-client/src/**/*.ts'
+      - 'maze-solver-client/src/**/*.css'
+      - 'maze-solver-client/src/**/*.svg'
+      - 'maze-solver-client/public/**'
+      - 'maze-solver-client/index.html'
+      - 'maze-solver-client/package.json'
+      - 'maze-solver-client/yarn.lock'
+      - 'maze-solver-client/tsconfig*.json'
+      - 'maze-solver-client/vite.config.ts'
+      - 'maze-solver-client/eslint.config.js'
       - '.github/workflows/s3-deploy.yml'
       # Explicitly exclude documentation changes
       - '!maze-solver-server/**'
