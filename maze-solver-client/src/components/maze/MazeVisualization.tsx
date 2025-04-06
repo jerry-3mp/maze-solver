@@ -1,12 +1,12 @@
 import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Paper, 
-  CircularProgress, 
+import {
+  Box,
+  Typography,
+  Paper,
+  CircularProgress,
   Alert,
   Button,
-  Grid
+  Grid, Chip
 } from '@mui/material';
 import { MazeResponseDTO } from '../../api/api';
 
@@ -198,7 +198,12 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
         <Grid item size={12}>
           <Box sx={{ mt: 2 }}>
             <Typography variant="body2" color="text.secondary" component="div">
-              <strong>Status:</strong> {maze.solved ? 'Solved' : 'Not Solved'}
+              <strong>Status:</strong>
+              <Chip
+                label={maze.solved ? "Solved" : "Unsolved"}
+                size="small"
+                color={maze.solved ? "success" : "default"}
+                sx={{ ml: 1 }}/>
               {maze.solved && maze.solvedPath && (
                 <Box component="span" sx={{ ml: 2 }}>
                   <strong>Solution length:</strong> {maze.solvedPath.length} steps
