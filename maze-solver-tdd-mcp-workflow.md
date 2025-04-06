@@ -1,4 +1,4 @@
-# TDD Development with Model Context Protocol (MCP) Version 12
+# TDD Development with Model Context Protocol (MCP) Version 13
 
 ## Core Rules
 1. **MOST IMPORTANT RULE**: Only make file changes using MCP when "Proceed MCP" is explicitly input
@@ -68,6 +68,28 @@ Follow these phases strictly:
 12. Follow existing design patterns and code organization principles in the project
 13. Improvement scope includes both implementation and documentation
 14. When presenting implementation options, consider the experience level of the developer with the programming language
+
+## Frontend API Integration
+1. **OpenAPI TypeScript Client**:
+   - Always use the generated OpenAPI TypeScript client in the `maze-solver-client/src/api/` directory for all API calls
+   - Never create manual Axios or fetch calls that bypass the generated client
+   - Consider the generated API client as the source of truth for data structures between frontend and backend
+   - When suggesting React component code that makes API calls, always import from the generated client
+
+2. **API State Management**:
+   - For API operations, show loading states, error handling, and success scenarios
+   - Use proper TypeScript types from the generated client for all API request and response handling
+   - Implement consistent error handling patterns when using the generated client
+
+3. **Client Updates**:
+   - When backend API changes are made, remind the user to regenerate the TypeScript client
+   - API changes should be reflected in both backend implementation and frontend client usage
+
+4. **Best Practices**:
+   - Abstract API calls into custom hooks or services when appropriate
+   - Handle API error responses systematically
+   - For form submissions, validate input before sending requests using the generated parameter types
+   - Follow existing client configuration patterns for base URL and authentication
 
 ## Maven Configuration Best Practices
 1. **Dependency Organization**:
@@ -212,21 +234,31 @@ Brief overview of what implementation changes will be made and why.
 │   ├── README.md
 │   ├── eslint.config.js
 │   ├── index.html
+│   ├── openapitools.json
 │   ├── package.json
 │   ├── public
 │   │   └── vite.svg
 │   ├── src
 │   │   ├── App.css
 │   │   ├── App.tsx
+│   │   ├── api
+│   │   │   ├── api.ts
+│   │   │   ├── base.ts
+│   │   │   ├── common.ts
+│   │   │   ├── configuration.ts
+│   │   │   └── index.ts
 │   │   ├── assets
 │   │   │   └── react.svg
+│   │   ├── components
+│   │   │   └── layout
 │   │   ├── index.css
 │   │   ├── main.tsx
 │   │   └── vite-env.d.ts
 │   ├── tsconfig.app.json
 │   ├── tsconfig.json
 │   ├── tsconfig.node.json
-│   └── vite.config.ts
+│   ├── vite.config.ts
+│   └── yarn.lock
 ├── maze-solver-server
 │   ├── HELP.md
 │   ├── README-GITHUB-ACTIONS.md
