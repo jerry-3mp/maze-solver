@@ -51,3 +51,4 @@ A maze generation and solution application.
 17. Implement maze visualization
 18. Refactor state management with Context/Provider pattern
     - https://dev.to/kurmivivek295/contextprovider-pattern-4m1c
+19. Implement perfect maze generation
