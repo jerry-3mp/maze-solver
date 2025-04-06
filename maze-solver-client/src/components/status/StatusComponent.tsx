@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import ApiFactory from '../../api/apiFactory';
+import Typography from "@mui/material/Typography";
 
 const StatusComponent = () => {
   const [status, setStatus] = useState<string>('Loading...');
@@ -23,10 +24,10 @@ const StatusComponent = () => {
   }, []);
 
   return (
-    <div className="status-container" style={{ textAlign: 'center' }}>
-      <h1>{status}</h1>
-      {error && <p className="error-message" style={{ color: 'red' }}>{error}</p>}
-    </div>
+      <Typography variant="h6">
+        {status}
+        {error && <p className="error-message" style={{ color: 'red' }}>{error}</p>}
+      </Typography>
   );
 };
 
