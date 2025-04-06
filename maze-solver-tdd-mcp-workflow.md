@@ -209,6 +209,7 @@ Brief overview of what implementation changes will be made and why.
 │   │   └── maze-builder-state-diagram.puml
 │   ├── events
 │   │   └── event.json
+│   ├── maze-solver-server.iml
 │   ├── maze.txt
 │   ├── mvnw
 │   ├── mvnw.cmd
@@ -227,12 +228,27 @@ Brief overview of what implementation changes will be made and why.
 │   │   │   │                   ├── builder
 │   │   │   │                   │   └── MazeBuilder.java
 │   │   │   │                   ├── config
+│   │   │   │                   │   ├── JpaConfig.java
 │   │   │   │                   │   └── SwaggerConfig.java
 │   │   │   │                   ├── controller
-│   │   │   │                   │   └── StatusController.java
-│   │   │   │                   └── model
-│   │   │   │                       ├── Maze.java
-│   │   │   │                       └── Position.java
+│   │   │   │                   │   ├── MazeController.java
+│   │   │   │                   │   ├── StatusController.java
+│   │   │   │                   │   └── dto
+│   │   │   │                   │       ├── MazeGenerationRequestDTO.java
+│   │   │   │                   │       ├── MazeResponseDTO.java
+│   │   │   │                   │       ├── MazeSummaryDTO.java
+│   │   │   │                   │       ├── MazeSummaryListResponse.java
+│   │   │   │                   │       └── PositionDTO.java
+│   │   │   │                   ├── entity
+│   │   │   │                   │   └── MazeEntity.java
+│   │   │   │                   ├── model
+│   │   │   │                   │   ├── Maze.java
+│   │   │   │                   │   └── Position.java
+│   │   │   │                   ├── repository
+│   │   │   │                   │   └── MazeRepository.java
+│   │   │   │                   └── service
+│   │   │   │                       ├── MazeService.java
+│   │   │   │                       └── MazeServiceImpl.java
 │   │   │   └── resources
 │   │   │       ├── application-lambda.properties
 │   │   │       ├── application-local.properties
@@ -241,6 +257,9 @@ Brief overview of what implementation changes will be made and why.
 │   │   │       ├── db
 │   │   │       │   └── migration
 │   │   │       │       └── common
+│   │   │       │           ├── V0__create_maze_solver_schema.sql
+│   │   │       │           ├── V1__
+│   │   │       │           └── V1__create_maze_table.sql
 │   │   │       ├── static
 │   │   │       └── templates
 │   │   └── test
@@ -252,8 +271,20 @@ Brief overview of what implementation changes will be made and why.
 │   │                           ├── MazeSolverServerApplicationTests.java
 │   │                           ├── builder
 │   │                           │   └── MazeBuilderTest.java
-│   │                           └── model
-│   │                               └── MazeTest.java
+│   │                           ├── controller
+│   │                           │   ├── MazeControllerTest.java
+│   │                           │   └── dto
+│   │                           │       ├── MazeResponseDTOTest.java
+│   │                           │       ├── MazeSummaryDTOTest.java
+│   │                           │       └── MazeSummaryListResponseTest.java
+│   │                           ├── entity
+│   │                           │   └── MazeEntityTest.java
+│   │                           ├── model
+│   │                           │   └── MazeTest.java
+│   │                           ├── repository
+│   │                           │   └── MazeRepositoryTest.java
+│   │                           └── service
+│   │                               └── MazeServiceTest.java
 │   └── template.yaml
 └── maze-solver-tdd-mcp-workflow.md
 ```

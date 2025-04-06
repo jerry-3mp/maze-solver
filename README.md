@@ -16,8 +16,10 @@ A maze generation and solution application.
 ### API Endpoints
 
 - `GET /api/status`: Returns a simple text message confirming the server is running
-
-*More endpoints will be added as the project develops*
+- `POST /api/v1/mazes`: Generates a random maze with specified dimensions
+- `GET /api/v1/mazes`: Returns a paginated list of maze summaries
+- `GET /api/v1/mazes/{id}`: Returns detailed information about a specific maze
+- `PUT /api/v1/mazes/{id}/solve`: Solves the specified maze and returns the solution
 
 ## Development Steps
 
@@ -32,4 +34,6 @@ A maze generation and solution application.
 7. Set up AWS RDS database and Lambda connectivity
 8. Implement secure credential management with GitHub Secrets
 9. Add rule against discussing maze-solving algorithms before develop maze-related feature
-10. Implement solve method with recursive DFS
+10. Implement Maze and MazeBuilder using the staged builder pattern
+11. Implement solve method with recursive DFS
+12. Implement API for generating, retrieving, and solving mazes
