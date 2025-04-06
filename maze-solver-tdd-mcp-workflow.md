@@ -1,4 +1,4 @@
-# TDD Development with Model Context Protocol (MCP) Version 11
+# TDD Development with Model Context Protocol (MCP) Version 12
 
 ## Core Rules
 1. **MOST IMPORTANT RULE**: Only make file changes using MCP when "Proceed MCP" is explicitly input
@@ -176,18 +176,24 @@ Brief overview of what implementation changes will be made and why.
 ```
 
 ## Current Project Context
-- **Target Programming Language:** Java 21 (JDK 21)
+- **Target Backend**: Java 21 (JDK 21) with Spring Boot 3.4.4
+- **Target Frontend**: React 19 with TypeScript and Vite 6.2.0
 - **Project Directory:** /Users/jerry3mp/Workspace/maze-solver
-- **Frameworks/Libraries:** 
+- **Backend Frameworks/Libraries:** 
   - Spring Boot 3.4.4
   - Flyway (database migration)
   - PostgreSQL
   - JUnit 5 (testing)
+- **Frontend Frameworks/Libraries:**
+  - React 19.0.0
+  - TypeScript 5.7.2
+  - Vite 6.2.0
 - **Documentation:**
   - PlantUML (.puml) for diagrams
   - README.md for project documentation
-- **Feature Description:** Implement the following functionality:
+- **Feature Description:** 
   1. Generate random maze and its solution
+  2. Visualize maze and solution in the frontend
 
 ## Database Tables
 
