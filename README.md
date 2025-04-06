@@ -10,6 +10,12 @@ A maze generation and solution application.
 - Flyway (database migration)
 - JUnit 5 (testing)
 - Maven (build tool)
+- AWS Lambda
+- AWS RDS
+- React 19
+- TypeScript
+- Vite
+- AWS S3
 
 ## Project Knowledge
 
@@ -37,3 +43,11 @@ A maze generation and solution application.
 10. Implement Maze and MazeBuilder using the staged builder pattern
 11. Implement solve method with recursive DFS
 12. Implement API for generating, retrieving, and solving mazes
+13. Initialize Vite + React + TypeScript frontend client folder
+14. Survey and set up S3 static website deploy by GitHub workflow
+    - https://www.youtube.com/watch?v=tajK4ezyuNc
+15. Test client to lambda connection by StatusComponent
+16. Implement header app bar and drawer
+17. Implement maze visualization
+18. Refactor state management with Context/Provider pattern
+    - https://dev.to/kurmivivek295/contextprovider-pattern-4m1c
