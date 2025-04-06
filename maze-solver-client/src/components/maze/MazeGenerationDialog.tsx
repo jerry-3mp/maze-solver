@@ -15,11 +15,13 @@ import { useMazeContext } from '../../context/MazeContext';
 
 interface MazeGenerationDialogProps {
   open: boolean;
+  perfect: boolean
   onClose: () => void;
 }
 
 const MazeGenerationDialog: React.FC<MazeGenerationDialogProps> = ({
   open,
+  perfect,
   onClose
 }) => {
   // Form state
@@ -56,14 +58,14 @@ const MazeGenerationDialog: React.FC<MazeGenerationDialogProps> = ({
     return isValid;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, perfect: boolean) => {
     e.preventDefault();
 
     if (!validateInputs()) {
       return;
     }
 
-    await generateMaze(width, height);
+    await generateMaze(width, height, perfect);
     onClose();
   };
 
@@ -82,7 +84,7 @@ const MazeGenerationDialog: React.FC<MazeGenerationDialogProps> = ({
       fullWidth
     >
       <DialogTitle>Generate New Maze</DialogTitle>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={(e)=>handleSubmit(e, perfect)}>
         <DialogContent>
           <Box sx={{ mb: 2 }}>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>

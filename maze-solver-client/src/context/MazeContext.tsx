@@ -21,7 +21,7 @@ interface MazeContextType {
   
   // Actions
   refresh: () => Promise<void>;
-  generateMaze: (width: number, height: number) => Promise<void>;
+  generateMaze: (width: number, height: number, perfect: boolean) => Promise<void>;
   solveMaze: (id: number) => Promise<void>;
 }
 
@@ -122,12 +122,12 @@ export const MazeProvider: React.FC<MazeProviderProps> = ({
   }, [currentPage, pageSize, mazeApi, currentMaze, hasInitialized, setCurrentMazeById]);
 
   // Generate a new maze
-  const generateMaze = useCallback(async (width: number, height: number) => {
+  const generateMaze = useCallback(async (width: number, height: number, perfect: boolean) => {
     setLoading(true);
     setError(null);
     
     try {
-      const response = await mazeApi.generateRandomMaze({ width, height });
+      const response = (perfect)? await mazeApi.generateRandomPerfectMaze({ width, height }):await mazeApi.generateRandomMaze({ width, height });
       const generatedMaze = response.data;
       await fetchMazes(); // Refresh the list
       if (generatedMaze?.id) {

@@ -10,13 +10,15 @@ import { MazeProvider } from './context/MazeContext.tsx';
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [generationDialogOpen, setGenerationDialogOpen] = useState(false);
+  const [perfectGeneration, setPerfectGeneration] = useState(false);
   
   const toggleDrawer = () => {
     setDrawerOpen((prevState) => !prevState);
   };
 
-  const handleOpenGenerationDialog = useCallback(() => {
+  const handleOpenGenerationDialog = useCallback((perfect: boolean) => {
     setGenerationDialogOpen(true);
+    setPerfectGeneration(perfect);
   }, []);
 
   const handleCloseGenerationDialog = useCallback(() => {
@@ -48,6 +50,7 @@ function App() {
           />
           <MazeGenerationDialog 
             open={generationDialogOpen}
+            perfect={perfectGeneration}
             onClose={handleCloseGenerationDialog}
           />
         </Box>

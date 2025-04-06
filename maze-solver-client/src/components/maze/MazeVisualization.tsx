@@ -12,7 +12,7 @@ import {
 import { useMazeContext } from '../../context/MazeContext';
 
 interface MazeVisualizationProps {
-  onGenerateMaze?: () => void;
+  onGenerateMaze?: (perfect: boolean) => void;
 }
 
 const MazeVisualization: React.FC<MazeVisualizationProps> = ({
@@ -25,9 +25,9 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
     }
   };
 
-  const handleGenerateClick = () => {
+  const handleGenerateClick = (perfect: boolean) => {
     if (onGenerateMaze) {
-      onGenerateMaze();
+      onGenerateMaze(perfect);
     }
   };
 
@@ -125,9 +125,16 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={handleGenerateClick}
+                onClick={()=>handleGenerateClick(false)}
               >
                 Generate Maze
+              </Button>
+              <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={()=>handleGenerateClick(true)}
+              >
+                Generate Perfect Maze
               </Button>
             </Box>
           </Box>

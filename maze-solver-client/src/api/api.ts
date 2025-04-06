@@ -204,6 +204,42 @@ export const MazeControllerApiAxiosParamCreator = function (configuration?: Conf
             };
         },
         /**
+         * Creates a new random perfect maze with the specified dimensions
+         * @summary Generate a random perfect maze
+         * @param {MazeGenerationRequestDTO} mazeGenerationRequestDTO 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        generateRandomPerfectMaze: async (mazeGenerationRequestDTO: MazeGenerationRequestDTO, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'mazeGenerationRequestDTO' is not null or undefined
+            assertParamExists('generateRandomPerfectMaze', 'mazeGenerationRequestDTO', mazeGenerationRequestDTO)
+            const localVarPath = `/api/v1/mazes/perfect`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(mazeGenerationRequestDTO, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Returns detailed information about a specific maze
          * @summary Get maze by ID
          * @param {number} id ID of maze to retrieve
@@ -345,6 +381,19 @@ export const MazeControllerApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Creates a new random perfect maze with the specified dimensions
+         * @summary Generate a random perfect maze
+         * @param {MazeGenerationRequestDTO} mazeGenerationRequestDTO 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async generateRandomPerfectMaze(mazeGenerationRequestDTO: MazeGenerationRequestDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MazeResponseDTO>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.generateRandomPerfectMaze(mazeGenerationRequestDTO, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MazeControllerApi.generateRandomPerfectMaze']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Returns detailed information about a specific maze
          * @summary Get maze by ID
          * @param {number} id ID of maze to retrieve
@@ -407,6 +456,16 @@ export const MazeControllerApiFactory = function (configuration?: Configuration,
             return localVarFp.generateRandomMaze(mazeGenerationRequestDTO, options).then((request) => request(axios, basePath));
         },
         /**
+         * Creates a new random perfect maze with the specified dimensions
+         * @summary Generate a random perfect maze
+         * @param {MazeGenerationRequestDTO} mazeGenerationRequestDTO 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        generateRandomPerfectMaze(mazeGenerationRequestDTO: MazeGenerationRequestDTO, options?: RawAxiosRequestConfig): AxiosPromise<MazeResponseDTO> {
+            return localVarFp.generateRandomPerfectMaze(mazeGenerationRequestDTO, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Returns detailed information about a specific maze
          * @summary Get maze by ID
          * @param {number} id ID of maze to retrieve
@@ -459,6 +518,18 @@ export class MazeControllerApi extends BaseAPI {
      */
     public generateRandomMaze(mazeGenerationRequestDTO: MazeGenerationRequestDTO, options?: RawAxiosRequestConfig) {
         return MazeControllerApiFp(this.configuration).generateRandomMaze(mazeGenerationRequestDTO, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Creates a new random perfect maze with the specified dimensions
+     * @summary Generate a random perfect maze
+     * @param {MazeGenerationRequestDTO} mazeGenerationRequestDTO 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof MazeControllerApi
+     */
+    public generateRandomPerfectMaze(mazeGenerationRequestDTO: MazeGenerationRequestDTO, options?: RawAxiosRequestConfig) {
+        return MazeControllerApiFp(this.configuration).generateRandomPerfectMaze(mazeGenerationRequestDTO, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
