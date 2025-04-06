@@ -40,6 +40,16 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
     }
   };
 
+  // Legend items with cell type and corresponding color
+  const legendItems = [
+    { type: 'Start', color: '#4CAF50' },
+    { type: 'End', color: '#F44336' },
+    { type: 'Wall', color: '#424242' },
+    { type: 'Path', color: '#2196F3' },
+    { type: 'Empty', color: '#FFFFFF' },
+    { type: 'Solution', color: '#FF9800' }
+  ];
+
   // Check if the current cell is part of the solution path
   const isSolutionCell = (row: number, col: number) => {
     if (!maze?.solvedPath) return false;
@@ -90,7 +100,7 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
   return (
     <Box sx={{ p: 3, maxWidth: '100%', overflow: 'auto' }}>
       <Grid container spacing={2}>
-        <Grid item xs={12}>
+        <Grid item size={12}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Typography variant="h5">
               Maze #{maze.id}
@@ -107,7 +117,32 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
           </Box>
         </Grid>
         
-        <Grid item xs={12}>
+        <Grid item size={12}>
+          <Paper elevation={1} sx={{ p: 2, mt: 2, mb: 2 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              Legend
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center' }}>
+              {legendItems.map((item) => (
+                <Box key={item.type} sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+                  <Box 
+                    sx={{
+                      width: 20,
+                      height: 20,
+                      backgroundColor: item.color,
+                      border: '1px solid #e0e0e0',
+                      mr: 1,
+                      borderRadius: item.type === 'Solution' ? '50%' : '0'
+                    }}
+                  />
+                  <Typography variant="caption">{item.type}</Typography>
+                </Box>
+              ))}
+            </Box>
+          </Paper>
+        </Grid>
+        
+        <Grid item size={12}>
           <Paper elevation={3} sx={{ p: 2, overflow: 'auto' }}>
             <Box sx={{ 
               display: 'grid',
@@ -160,7 +195,7 @@ const MazeVisualization: React.FC<MazeVisualizationProps> = ({
           </Paper>
         </Grid>
         
-        <Grid item xs={12}>
+        <Grid item size={12}>
           <Box sx={{ mt: 2 }}>
             <Typography variant="body2" color="text.secondary" component="div">
               <strong>Status:</strong> {maze.solved ? 'Solved' : 'Not Solved'}
