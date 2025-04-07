@@ -17,6 +17,12 @@ A maze generation and solution application.
 - Vite
 - AWS S3
 
+## System Architecture
+
+![Maze Solver Container Diagram](diagrams/maze-solver-container-diagram.png)
+
+The diagram above illustrates the three-tier architecture of the Maze Solver application, showing the web client, server application, and database components with their interactions.
+
 ## Project Knowledge
 
 ### API Endpoints
