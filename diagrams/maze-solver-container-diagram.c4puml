@@ -1,0 +1,30 @@
+@startuml
+skinparam  dpi 300
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define DEVICONS2 https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons2
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/java.puml
+!include DEVICONS2/postgresql.puml
+!include FONTAWESOME/react.puml
+!include FONTAWESOME/users.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Container diagram for Maze Solver
+
+
+Person(users, "Users", "Users of Maze Solver", $sprite="users")
+
+System_Boundary(bnop, "BNOP") {
+    Container(client, "Maze Solver Web Page", "React, Vite, AWS S3", "desc", $sprite="react")
+    Container(server, "Maze Solver Server", "Java, AWS Lambda", "desc", $sprite="java")
+    ContainerDb(postgresql, "Relational DB", "PostgreSQL, AWS RDS", "desc", $sprite="postgresql")
+}
+
+Rel(users, client, "Uses", "HTTPS")
+Rel(client, server, "Uses", "HTTPS")
+Rel(server, postgresql, "Read & write to", "Spring Data JPA")
+
+@enduml
