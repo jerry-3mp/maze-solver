@@ -228,6 +228,8 @@ Brief overview of what implementation changes will be made and why.
 ./
 ├── LICENSE
 ├── README.md
+├── diagrams
+│   └── maze-solver-container-diagram.c4puml
 ├── docker-compose.pg.volume.yml
 ├── docker-compose.yml
 ├── maze-solver-client
@@ -247,7 +249,6 @@ Brief overview of what implementation changes will be made and why.
 │   │   │   ├── base.ts
 │   │   │   ├── common.ts
 │   │   │   ├── configuration.ts
-│   │   │   ├── git_push.sh
 │   │   │   └── index.ts
 │   │   ├── assets
 │   │   │   └── react.svg
@@ -256,15 +257,16 @@ Brief overview of what implementation changes will be made and why.
 │   │   │   │   ├── ButtonAppBar.tsx
 │   │   │   │   └── MazesDrawer.tsx
 │   │   │   ├── maze
+│   │   │   │   ├── MazeGenerationDialog.tsx
 │   │   │   │   ├── MazeItem.tsx
 │   │   │   │   └── MazeVisualization.tsx
 │   │   │   └── status
 │   │   │       └── StatusComponent.tsx
 │   │   ├── config
 │   │   │   └── apiConfig.ts
+│   │   ├── context
+│   │   │   └── MazeContext.tsx
 │   │   ├── hooks
-│   │   │   ├── useMazeDetails.ts
-│   │   │   └── useMazes.ts
 │   │   ├── index.css
 │   │   ├── main.tsx
 │   │   └── vite-env.d.ts

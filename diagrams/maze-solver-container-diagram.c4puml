@@ -18,9 +18,9 @@ title Container diagram for Maze Solver
 Person(users, "Users", "Users of Maze Solver", $sprite="users")
 
 System_Boundary(bnop, "BNOP") {
-    Container(client, "Maze Solver Web Page", "React, Vite, AWS S3", "desc", $sprite="react")
-    Container(server, "Maze Solver Server", "Java, AWS Lambda", "desc", $sprite="java")
-    ContainerDb(postgresql, "Relational DB", "PostgreSQL, AWS RDS", "desc", $sprite="postgresql")
+    Container(client, "Maze Solver Web Page", "React, Vite, AWS S3", "Provides user interface for maze generation and visualization", $sprite="react")
+    Container(server, "Maze Solver Server", "Java, AWS Lambda", "Handles maze generation, solving, and persistence", $sprite="java")
+    ContainerDb(postgresql, "Relational DB", "PostgreSQL, AWS RDS", "Stores maze configurations and solutions", $sprite="postgresql")
 }
 
 Rel(users, client, "Uses", "HTTPS")
