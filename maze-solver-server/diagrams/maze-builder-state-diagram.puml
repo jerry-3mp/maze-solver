@@ -15,7 +15,9 @@ state PositionStage {
   [*] --> NoPositions
   NoPositions --> HasStart : start(row, col)
   NoPositions --> PathStage : randomStartAndEnd()
+  NoPositions --> FinalStage : withKruskalMaze()
   HasStart --> PathStage : end(row, col)
+  HasStart --> FinalStage : withKruskalMaze()
 }
 
 state PathStage {
