@@ -58,3 +58,13 @@ The diagram above illustrates the three-tier architecture of the Maze Solver app
 18. Refactor state management with Context/Provider pattern
     - https://dev.to/kurmivivek295/contextprovider-pattern-4m1c
 19. Implement perfect maze generation
+
+## Know Issues
+
+* Unable to access the Swagger page from Lambda
+* State management issues and redundant API calls
+* Stage management: calling end() without start() does not result in an error
+* Move the set path logic in solve() to setSolvedPath() for better separation of concerns
+* Insufficient encapsulation for Maze properties — remove unnecessary setters
+* Frontend styles need further polishing
+* The solve() method can be improved with a more efficient algorithm
